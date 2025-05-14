@@ -1,4 +1,5 @@
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class Assignment {
 	private String title;
@@ -25,18 +26,19 @@ public class Assignment {
 		return dueDate;
 	}
 
-	// Method to extend the due date
-	public void extendDueDate(int days) {
-		this.dueDate = this.dueDate.plusDays(days); // Extends due date with the given number of days
-	}
-
-	// Changes due date (resets it)
-	public void dueSat(LocalDate newDueDate) {
-		this.dueDate = newDueDate; // Sets the new due date
+	// Sets the due date
+	public void setDueDate(LocalDate newDueDate) {
+		this.dueDate = newDueDate;
 	}
 
 	// Checks if the assignment is overdue
 	public boolean isOverdue() {
 		return LocalDate.now().isAfter(dueDate);
+	}
+
+	// Formats LocalDate using the DateTimeFormatter
+	public String formattedDueDate() {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd yyyy");
+		return dueDate.format(formatter);
 	}
 }
