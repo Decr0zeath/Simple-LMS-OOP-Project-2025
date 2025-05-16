@@ -2,8 +2,8 @@ package dashboard;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.net.URL;
 import javax.swing.*;
+import java.net.URL;
 
 public class Dashboard {
 
@@ -22,29 +22,25 @@ public class Dashboard {
             coursePanel.setBackground(Color.LIGHT_GRAY);
             coursePanel.add(new JButton("Course Panel"));
 
-            JPanel assignmentPanel = new JPanel();
-            assignmentPanel.setBackground(Color.CYAN);
-            assignmentPanel.add(new JButton("Assignment Panel"));
+            JPanel toDoPanel = new JPanel();
+            toDoPanel.setBackground(Color.CYAN);
+            toDoPanel.add(new JButton("To-Do Panel"));
 
             JPanel gradePanel = new JPanel();
             gradePanel.setBackground(Color.YELLOW);
             gradePanel.add(new JButton("Grade Panel"));
 
-            // Add to CardLayout
             cardPanel.add(coursePanel, "Courses");
-            cardPanel.add(assignmentPanel, "To-Do");
+            cardPanel.add(toDoPanel, "To-Do");
             cardPanel.add(gradePanel, "Grades");
 
             // Load and resize icons
             ImageIcon courseIcon = resizeIcon(loadIcon("/resources/courses.png"));
             ImageIcon courseHoverIcon = resizeIcon(loadIcon("/resources/courses_white.png"));
-
             ImageIcon toDoIcon = resizeIcon(loadIcon("/resources/assignment.png"));
             ImageIcon toDoHoverIcon = resizeIcon(loadIcon("/resources/assignment_white.png"));
-
             ImageIcon gradeIcon = resizeIcon(loadIcon("/resources/grade.png"));
             ImageIcon gradeHoverIcon = resizeIcon(loadIcon("/resources/grade_white.png"));
-
             ImageIcon profileIcon = resizeIcon(loadIcon("/resources/profile.png"));
             ImageIcon profileHoverIcon = resizeIcon(loadIcon("/resources/profile_white.png"));
 
@@ -59,7 +55,7 @@ public class Dashboard {
             JButton[] buttons = { cButton, tButton, gButton, pButton };
             ImageIcon[] defaultIcons = { courseIcon, toDoIcon, gradeIcon, profileIcon };
             ImageIcon[] hoverIcons = { courseHoverIcon, toDoHoverIcon, gradeHoverIcon, profileHoverIcon };
-            String[] panelNames = { "Courses", "Assignments", "Grades" };
+            String[] panelNames = { "Courses", "To-Do", "Grades" };
 
             JPanel headerPanel = new JPanel(null);
             headerPanel.setBackground(new Color(0, 128, 0));
@@ -78,7 +74,7 @@ public class Dashboard {
                 headerPanel.add(btn);
             }
 
-            // Profile dropdown menu (250px wide)
+            // Create the profile menu (JPopupMenu)
             JPopupMenu profileMenu = new JPopupMenu();
             profileMenu.setLayout(new BoxLayout(profileMenu, BoxLayout.Y_AXIS));
             profileMenu.setPreferredSize(new Dimension(234, 80));
@@ -93,25 +89,42 @@ public class Dashboard {
             profileMenu.add(viewProfile);
             profileMenu.add(logout);
 
-            // Add dummy actions
-            viewProfile.addActionListener(e -> JOptionPane.showMessageDialog(LMS, "Viewing Profile..."));
-            logout.addActionListener(e -> JOptionPane.showMessageDialog(LMS, "Logging out..."));
+            // Boolean array to track if the menu is visible (moved here to fix the error)
+            boolean[] isMenuVisible = { false };
 
-            // Show profile menu inside the frame
+            // Action listeners for the menu items
+            viewProfile.addActionListener(e -> {
+                openProfileFrame();
+                profileMenu.setVisible(false);
+                isMenuVisible[0] = false;
+            });
+
+            logout.addActionListener(e -> {
+                openLogoutFrame();
+                profileMenu.setVisible(false);
+                isMenuVisible[0] = false;
+            });
+
+            // Profile button action listener to toggle menu visibility
             pButton.addActionListener(e -> {
-                Point buttonScreenPos = pButton.getLocationOnScreen();
-                Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-                int menuHeight = profileMenu.getPreferredSize().height;
-
-                // Show below unless it would go off screen
-                if (buttonScreenPos.y + pButton.getHeight() + menuHeight < screenSize.height) {
-                    profileMenu.show(pButton, 0, pButton.getHeight());
+                if (isMenuVisible[0]) {
+                    profileMenu.setVisible(false);
+                    isMenuVisible[0] = false;
                 } else {
-                    profileMenu.show(pButton, 0, -menuHeight);
+                    Point buttonScreenPos = pButton.getLocationOnScreen();
+                    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+                    int menuHeight = profileMenu.getPreferredSize().height;
+
+                    if (buttonScreenPos.y + pButton.getHeight() + menuHeight < screenSize.height) {
+                        profileMenu.show(pButton, 0, pButton.getHeight());
+                    } else {
+                        profileMenu.show(pButton, 0, -menuHeight);
+                    }
+
+                    isMenuVisible[0] = true;
                 }
             });
 
-            // Add everything to the frame
             LMS.add(headerPanel);
             LMS.add(cardPanel);
             cardPanel.setBounds(20, 120, 940, 550);
@@ -123,23 +136,92 @@ public class Dashboard {
         });
     }
 
+    private static void openProfileFrame() {
+        JFrame profileFrame = new JFrame("Profile");
+        profileFrame.setSize(300, 200);
+        profileFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        profileFrame.setLayout(new BorderLayout());
+
+        JLabel profileLabel = new JLabel("<html><h3>John Doe's Profile</h3><p>Email: johndoe@example.com</p></html>");
+        profileLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        profileFrame.add(profileLabel, BorderLayout.CENTER);
+
+        profileFrame.setLocationRelativeTo(null);
+        profileFrame.setVisible(true);
+    }
+
+    private static void openLogoutFrame() {
+        JFrame logoutFrame = new JFrame("Logout");
+        logoutFrame.setSize(300, 200);
+        logoutFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        logoutFrame.setLayout(new BorderLayout());
+
+        JLabel logoutLabel = new JLabel("<html><h3>Are you sure you want to logout?</h3></html>");
+        logoutLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        JPanel buttonPanel = new JPanel();
+        JButton yesButton = new JButton("Yes");
+        JButton noButton = new JButton("No");
+
+        yesButton.addActionListener(e -> {
+            logoutFrame.dispose();
+        });
+
+        noButton.addActionListener(e -> logoutFrame.dispose());
+
+        buttonPanel.add(yesButton);
+        buttonPanel.add(noButton);
+
+        logoutFrame.add(logoutLabel, BorderLayout.CENTER);
+        logoutFrame.add(buttonPanel, BorderLayout.SOUTH);
+
+        logoutFrame.setLocationRelativeTo(null);
+        logoutFrame.setVisible(true);
+    }
+
     private static void styleFlatButton(JButton button, ImageIcon defaultIcon, ImageIcon hoverIcon) {
         button.setFocusPainted(false);
+        button.setFocusable(false);
+        button.setRequestFocusEnabled(false);
         button.setOpaque(true);
-        button.setBorderPainted(false);
         button.setBackground(new Color(0, 128, 0));
         button.setForeground(Color.BLACK);
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        button.setBorder(null);
+
+        Color pressedColor = new Color(0, 100, 0);
+
+        button.setRolloverEnabled(true);
 
         button.addMouseListener(new MouseAdapter() {
             public void mouseEntered(MouseEvent e) {
                 button.setForeground(Color.WHITE);
                 if (hoverIcon != null) button.setIcon(hoverIcon);
+                button.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
             }
 
             public void mouseExited(MouseEvent e) {
                 button.setForeground(Color.BLACK);
                 if (defaultIcon != null) button.setIcon(defaultIcon);
+                button.setBorder(null);
+                button.setBackground(new Color(0, 128, 0));
+            }
+
+            public void mousePressed(MouseEvent e) {
+                button.setBackground(pressedColor);
+                button.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
+            }
+
+            public void mouseReleased(MouseEvent e) {
+                button.setBackground(new Color(0, 128, 0));
+                button.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
+            }
+        });
+
+        button.setUI(new javax.swing.plaf.basic.BasicButtonUI() {
+            @Override
+            public void paint(Graphics g, JComponent c) {
+                super.paint(g, c);
             }
         });
     }
