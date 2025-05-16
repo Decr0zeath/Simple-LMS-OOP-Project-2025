@@ -32,8 +32,11 @@ public class Assignment {
 	}
 
 	// Checks if the assignment is overdue
-	public boolean isOverdue() {
-		return LocalDate.now().isAfter(dueDate);
+	public void checkOverdue() {
+		if (LocalDate.now().isAfter(dueDate)) {
+			System.out.println("Assignment is Overdue");
+		}
+
 	}
 
 	// Formats LocalDate using the DateTimeFormatter
