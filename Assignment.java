@@ -31,7 +31,7 @@ public class Assignment {
 		this.dueDate = newDueDate;
 	}
 
-	// Checks if the assignment is overdue
+	// Prints a message if the assignment is overdue
 	public void checkOverdue() {
 		if (LocalDate.now().isAfter(dueDate)) {
 			System.out.println("Assignment is Overdue");
