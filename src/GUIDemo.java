@@ -6,7 +6,7 @@ import java.awt.*;
 
 public class GUIDemo {
 
-    // Custom JLabel with stroke effect
+    // JLabel stroke effect
     static class StrokeLabel extends JLabel {
         private Color strokeColor = Color.white;
         private int strokeWidth = 2;
