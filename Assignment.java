@@ -77,7 +77,6 @@ public class Assignment {
 
 	// Returns string representation of assignment with it's title, description, and
 	// formatted due date
-	@Override
 	public String toFileString() {
 		return "Assignment {" +
 				"Title='" + title + '\'' +
