@@ -1,139 +1,141 @@
-package dashboard;
+package Dashboard;
 
 import java.awt.*;
 import java.awt.event.*;
-import javax.swing.*;
 import java.net.URL;
+import javax.swing.*;
 
 public class Dashboard {
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            JFrame LMS = new JFrame("SCS Main Campus LMS");
-            LMS.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            LMS.setSize(1000, 730);
-            LMS.setLayout(null);
+    public Dashboard() {
+        JFrame LMS = new JFrame("SCS Main Campus LMS");
+        LMS.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        LMS.setSize(1000, 730);
+        LMS.setLayout(null);
 
-            ImageIcon logoIcon = loadIcon("/resources/logo.png");
+        ImageIcon logoIcon = loadIcon("resources/logo.png");
 
-            JPanel cardPanel = new JPanel(new CardLayout());
+        JPanel cardPanel = new JPanel(new CardLayout());
 
-            JPanel coursePanel = new JPanel();
-            coursePanel.setBackground(Color.LIGHT_GRAY);
-            coursePanel.add(new JButton("Course Panel"));
+        JPanel coursePanel = new JPanel();
+        coursePanel.setBackground(Color.LIGHT_GRAY);
+        coursePanel.add(new JButton("Course Panel"));
 
-            JPanel toDoPanel = new JPanel();
-            toDoPanel.setBackground(Color.CYAN);
-            toDoPanel.add(new JButton("To-Do Panel"));
+        JPanel toDoPanel = new JPanel();
+        toDoPanel.setBackground(Color.CYAN);
+        toDoPanel.add(new JButton("To-Do Panel"));
 
-            JPanel gradePanel = new JPanel();
-            gradePanel.setBackground(Color.YELLOW);
-            gradePanel.add(new JButton("Grade Panel"));
+        JPanel gradePanel = new JPanel();
+        gradePanel.setBackground(Color.YELLOW);
+        gradePanel.add(new JButton("Grade Panel"));
 
-            cardPanel.add(coursePanel, "Courses");
-            cardPanel.add(toDoPanel, "To-Do");
-            cardPanel.add(gradePanel, "Grades");
+        cardPanel.add(coursePanel, "Courses");
+        cardPanel.add(toDoPanel, "To-Do");
+        cardPanel.add(gradePanel, "Grades");
 
-            // Load and resize icons
-            ImageIcon courseIcon = resizeIcon(loadIcon("/resources/courses.png"));
-            ImageIcon courseHoverIcon = resizeIcon(loadIcon("/resources/courses_white.png"));
-            ImageIcon toDoIcon = resizeIcon(loadIcon("/resources/assignment.png"));
-            ImageIcon toDoHoverIcon = resizeIcon(loadIcon("/resources/assignment_white.png"));
-            ImageIcon gradeIcon = resizeIcon(loadIcon("/resources/grade.png"));
-            ImageIcon gradeHoverIcon = resizeIcon(loadIcon("/resources/grade_white.png"));
-            ImageIcon profileIcon = resizeIcon(loadIcon("/resources/profile.png"));
-            ImageIcon profileHoverIcon = resizeIcon(loadIcon("/resources/profile_white.png"));
+        // Load and resize icons
+        ImageIcon courseIcon = resizeIcon(loadIcon("resources/courses.png"));
+        ImageIcon courseHoverIcon = resizeIcon(loadIcon("resources/courses_white.png"));
+        ImageIcon toDoIcon = resizeIcon(loadIcon("resources/assignment.png"));
+        ImageIcon toDoHoverIcon = resizeIcon(loadIcon("resources/assignment_white.png"));
+        ImageIcon gradeIcon = resizeIcon(loadIcon("resources/grade.png"));
+        ImageIcon gradeHoverIcon = resizeIcon(loadIcon("resources/grade_white.png"));
+        ImageIcon profileIcon = resizeIcon(loadIcon("resources/profile.png"));
+        ImageIcon profileHoverIcon = resizeIcon(loadIcon("resources/profile_white.png"));
 
-            int buttonWidth = 250;
-            int buttonHeight = 100;
+        int buttonWidth = 250;
+        int buttonHeight = 100;
 
-            JButton cButton = new JButton("Courses", courseIcon);
-            JButton tButton = new JButton("To-Do", toDoIcon);
-            JButton gButton = new JButton("Grades", gradeIcon);
-            JButton pButton = new JButton("Profile", profileIcon);
+        JButton cButton = new JButton("Courses", courseIcon);
+        JButton tButton = new JButton("To-Do", toDoIcon);
+        JButton gButton = new JButton("Grades", gradeIcon);
+        JButton pButton = new JButton("Profile", profileIcon);
 
-            JButton[] buttons = { cButton, tButton, gButton, pButton };
-            ImageIcon[] defaultIcons = { courseIcon, toDoIcon, gradeIcon, profileIcon };
-            ImageIcon[] hoverIcons = { courseHoverIcon, toDoHoverIcon, gradeHoverIcon, profileHoverIcon };
-            String[] panelNames = { "Courses", "To-Do", "Grades" };
+        JButton[] buttons = { cButton, tButton, gButton, pButton };
+        ImageIcon[] defaultIcons = { courseIcon, toDoIcon, gradeIcon, profileIcon };
+        ImageIcon[] hoverIcons = { courseHoverIcon, toDoHoverIcon, gradeHoverIcon, profileHoverIcon };
+        String[] panelNames = { "Courses", "To-Do", "Grades" };
 
-            JPanel headerPanel = new JPanel(null);
-            headerPanel.setBackground(new Color(0, 128, 0));
-            headerPanel.setBounds(0, 0, 1000, buttonHeight);
+        JPanel headerPanel = new JPanel(null);
+        headerPanel.setBackground(new Color(0, 128, 0));
+        headerPanel.setBounds(0, 0, 1000, buttonHeight);
 
-            for (int i = 0; i < buttons.length; i++) {
-                JButton btn = buttons[i];
-                btn.setBounds(i * buttonWidth, 0, buttonWidth, buttonHeight);
-                btn.setHorizontalTextPosition(SwingConstants.CENTER);
-                btn.setVerticalTextPosition(SwingConstants.BOTTOM);
-                styleFlatButton(btn, defaultIcons[i], hoverIcons[i]);
-                if (i < 3) {
-                    final String name = panelNames[i];
-                    btn.addActionListener(e -> showPanel(cardPanel, name));
-                }
-                headerPanel.add(btn);
+        for (int i = 0; i < buttons.length; i++) {
+            JButton btn = buttons[i];
+            btn.setBounds(i * buttonWidth, 0, buttonWidth, buttonHeight);
+            btn.setHorizontalTextPosition(SwingConstants.CENTER);
+            btn.setVerticalTextPosition(SwingConstants.BOTTOM);
+            styleFlatButton(btn, defaultIcons[i], hoverIcons[i]);
+            if (i < 3) {
+                final String name = panelNames[i];
+                btn.addActionListener(e -> showPanel(cardPanel, name));
             }
+            headerPanel.add(btn);
+        }
 
-            // Create the profile menu (JPopupMenu)
-            JPopupMenu profileMenu = new JPopupMenu();
-            profileMenu.setLayout(new BoxLayout(profileMenu, BoxLayout.Y_AXIS));
-            profileMenu.setPreferredSize(new Dimension(234, 80));
+        // Create the profile menu (JPopupMenu)
+        JPopupMenu profileMenu = new JPopupMenu();
+        profileMenu.setLayout(new BoxLayout(profileMenu, BoxLayout.Y_AXIS));
+        profileMenu.setPreferredSize(new Dimension(234, 80));
 
-            JMenuItem viewProfile = new JMenuItem("View Profile");
-            JMenuItem logout = new JMenuItem("Logout");
+        JMenuItem viewProfile = new JMenuItem("View Profile");
+        JMenuItem logout = new JMenuItem("Logout");
 
-            Dimension menuItemSize = new Dimension(buttonWidth, 40);
-            viewProfile.setPreferredSize(menuItemSize);
-            logout.setPreferredSize(menuItemSize);
+        Dimension menuItemSize = new Dimension(buttonWidth, 40);
+        viewProfile.setPreferredSize(menuItemSize);
+        logout.setPreferredSize(menuItemSize);
 
-            profileMenu.add(viewProfile);
-            profileMenu.add(logout);
+        profileMenu.add(viewProfile);
+        profileMenu.add(logout);
 
-            // Boolean array to track if the menu is visible (moved here to fix the error)
-            boolean[] isMenuVisible = { false };
+        // Boolean array to track if the menu is visible (moved here to fix the error)
+        boolean[] isMenuVisible = { false };
 
-            // Action listeners for the menu items
-            viewProfile.addActionListener(e -> {
-                openProfileFrame();
-                profileMenu.setVisible(false);
-                isMenuVisible[0] = false;
-            });
-
-            logout.addActionListener(e -> {
-                openLogoutFrame();
-                profileMenu.setVisible(false);
-                isMenuVisible[0] = false;
-            });
-
-            // Profile button action listener to toggle menu visibility
-            pButton.addActionListener(e -> {
-                if (isMenuVisible[0]) {
-                    profileMenu.setVisible(false);
-                    isMenuVisible[0] = false;
-                } else {
-                    Point buttonScreenPos = pButton.getLocationOnScreen();
-                    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-                    int menuHeight = profileMenu.getPreferredSize().height;
-
-                    if (buttonScreenPos.y + pButton.getHeight() + menuHeight < screenSize.height) {
-                        profileMenu.show(pButton, 0, pButton.getHeight());
-                    } else {
-                        profileMenu.show(pButton, 0, -menuHeight);
-                    }
-
-                    isMenuVisible[0] = true;
-                }
-            });
-
-            LMS.add(headerPanel);
-            LMS.add(cardPanel);
-            cardPanel.setBounds(20, 120, 940, 550);
-            cardPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-
-            LMS.setLocationRelativeTo(null);
-            LMS.setIconImage(logoIcon != null ? logoIcon.getImage() : null);
-            LMS.setVisible(true);
+        // Action listeners for the menu items
+        viewProfile.addActionListener(e -> {
+            openProfileFrame();
+            profileMenu.setVisible(false);
+            isMenuVisible[0] = false;
         });
+
+        logout.addActionListener(e -> {
+            openLogoutFrame();
+            profileMenu.setVisible(false);
+            isMenuVisible[0] = false;
+        });
+
+        // Profile button action listener to toggle menu visibility
+        pButton.addActionListener(e -> {
+            if (isMenuVisible[0]) {
+                profileMenu.setVisible(false);
+                isMenuVisible[0] = false;
+            } else {
+                Point buttonScreenPos = pButton.getLocationOnScreen();
+                Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+                int menuHeight = profileMenu.getPreferredSize().height;
+
+                if (buttonScreenPos.y + pButton.getHeight() + menuHeight < screenSize.height) {
+                    profileMenu.show(pButton, 0, pButton.getHeight());
+                } else {
+                    profileMenu.show(pButton, 0, -menuHeight);
+                }
+
+                isMenuVisible[0] = true;
+            }
+        });
+
+        LMS.add(headerPanel);
+        LMS.add(cardPanel);
+        cardPanel.setBounds(20, 120, 940, 550);
+        cardPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+
+        LMS.setLocationRelativeTo(null);
+        LMS.setIconImage(logoIcon != null ? logoIcon.getImage() : null);
+        LMS.setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(Dashboard::new); // Call constructor from main
     }
 
     private static void openProfileFrame() {
