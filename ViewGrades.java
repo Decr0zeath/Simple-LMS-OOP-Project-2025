@@ -15,9 +15,9 @@ import java.awt.Font;
 public class ViewGrades {
     
     public static void main(String[] args) {
-        JFrame frame = new JFrame("View Grades");
+        JFrame frame = new JFrame("View Assignments");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1000, 500);
+        frame.setSize(1000, 600);
         frame.setLayout(new BorderLayout());
 
 
@@ -26,14 +26,14 @@ public class ViewGrades {
         Color greenColor = Color.decode("#458846");
         topPanel.setBackground(greenColor);
 
-
-        JLabel title = new JLabel("Assignment Grades", SwingConstants.CENTER);
+        
+        JLabel title = new JLabel("Assignments");
         title.setFont(new Font("SansSerif", Font.BOLD, 20));
-        title.setOpaque(true); // Needed to show background color
+        title.setOpaque(true); // Show background color
         title.setBackground(greenColor);
-        title.setForeground(Color.BLACK);// For Black text
-        title.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));// add spacing
-        topPanel.add(title, BorderLayout.CENTER);
+        title.setForeground(Color.BLACK); // For Black text
+        title.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 0)); // add spacing
+        topPanel.add(title, BorderLayout.WEST);
         frame.add(topPanel, BorderLayout.NORTH);
 
         
@@ -46,7 +46,26 @@ public class ViewGrades {
         // test data
         // Sample data for the table
         Object[][] data = {
-            {"", "",}
+            {"Prog 2", "Activity 1 - Arrays"," 50 / 70"},
+            {"Prog 2","Activity 2 - Loops", " 60 / 70"},
+            {"Prog 2", "Activity 3 - Functions", " 70 / 70"},
+            {"Prog 2", "Activity 4 - Classes", " 80 / 100"},
+            {"Prog 2", "Activity 5 - Inheritance", " 90 / 100"},
+            {"Prog 2", "Activity 6 - Polymorphism", "100 / 100"},
+            {"Prog 2", "Activity 7 - Interfaces", "110 / 150"},
+            {"Prog 2", "Activity 8 - Abstract Classes", "120 / 150"},
+            {"Prog 2", "Activity 9 - Exception Handling", "130 / 150"},
+            {"Prog 2", "Activity 10 - File I/O", "140 / 150"},
+            {"DVA", "Activity 1 - Arrays"," 50 / 70"},
+            {"DVA", "Activity 2 - Loops", " 60 / 70"},
+            {"DVA", "Activity 3 - Functions", " 70 / 70"},
+            {"DVA", "Activity 4 - Classes", " 80 / 100"},
+            {"DVA", "Activity 5 - Inheritance", " 90 / 100"},
+            {"DVA", "Activity 6 - Polymorphism", "100 / 100"},
+            {"DVA", "Activity 7 - Interfaces", "110 / 150"},
+            {"DVA", "Activity 8 - Abstract Classes", "120 / 150"},
+            {"DVA", "Activity 9 - Exception Handling", "130 / 150"},
+            {"DVA", "Activity 10 - File I/O", "140 / 150"}
         };
 
         //Object[][] data = new Object[0][];
@@ -87,7 +106,7 @@ public class ViewGrades {
         frame.add(topPanel, BorderLayout.NORTH);
         frame.add(scrollPane, BorderLayout.CENTER);
 
-
+        frame.setLocationRelativeTo(null); // Center the frame on the screen
         frame.setVisible(true);
     }
 
