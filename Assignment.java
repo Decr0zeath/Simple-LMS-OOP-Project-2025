@@ -74,4 +74,15 @@ public class Assignment {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd yyyy");
 		return dueDate.format(formatter);
 	}
+
+	// Returns string representation of assignment with it's title, description, and
+	// formatted due date
+	@Override
+	public String toString() {
+		return "Assignment {" +
+				"Title='" + title + '\'' +
+				", Description='" + description + '\'' +
+				", Due Date='" + formattedDueDate() + '\'' +
+				'}';
+	}
 }
