@@ -1,5 +1,3 @@
-package classProject;
-
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,7 +19,7 @@ public class SubjectInfo {
         return courseId;
     }
 
-    public String getCourseName() {
+    public String getCourseName() {     
         return courseName;
     }
 
