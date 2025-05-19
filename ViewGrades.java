@@ -20,13 +20,14 @@ public class ViewGrades {
         frame.setSize(1000, 500);
         frame.setLayout(new BorderLayout());
 
+
         // Adding color to BG Color to student grades
         JPanel topPanel = new JPanel(new BorderLayout());
         Color greenColor = Color.decode("#458846");
         topPanel.setBackground(greenColor);
 
 
-        JLabel title = new JLabel("Student Grades", SwingConstants.CENTER);
+        JLabel title = new JLabel("Assignment Grades", SwingConstants.CENTER);
         title.setFont(new Font("SansSerif", Font.BOLD, 20));
         title.setOpaque(true); // Needed to show background color
         title.setBackground(greenColor);
@@ -42,12 +43,12 @@ public class ViewGrades {
             "Course", "Assignment Title", "Grades Given"
         };
 
-        // Add data
+        // test data
+        // Sample data for the table
         Object[][] data = {
-            {"Prog 2", "Activity 1 - Vending Machine",}
+            {"", "",}
         };
 
-        // No data add later for prac
         //Object[][] data = new Object[0][];
 
         // For the table
@@ -60,7 +61,8 @@ public class ViewGrades {
 
         JTable table = new JTable(model);// Create table with model
         table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS); 
-        table.setRowHeight(30); // Optional: increase row height for better readability
+        table.setRowHeight(35); // increase row height for better readability
+
 
         // Center cell data
         ((DefaultTableModel) table.getModel()).fireTableDataChanged();
@@ -70,17 +72,21 @@ public class ViewGrades {
             table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
         }
 
+
         // Lock column reordering
         table.getTableHeader().setReorderingAllowed(false);
+
 
         // Scroll pane with horizontal and vertical scroll
         JScrollPane scrollPane = new JScrollPane(table,
             JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
             JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
+
         // Add components to the frame
         frame.add(topPanel, BorderLayout.NORTH);
         frame.add(scrollPane, BorderLayout.CENTER);
+
 
         frame.setVisible(true);
     }
