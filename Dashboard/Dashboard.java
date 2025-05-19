@@ -13,6 +13,8 @@ public class Dashboard {
         LMS.setSize(1000, 730);
         LMS.setLayout(null);
 
+        LMS.setResizable(false);
+
         ImageIcon logoIcon = loadIcon("resources/logo.png");
 
         JPanel cardPanel = new JPanel(new CardLayout());
