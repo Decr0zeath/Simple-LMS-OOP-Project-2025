@@ -1,8 +1,7 @@
-
 import javax.swing.*;
 import java.awt.*;
-//import java.awt.event.*;
-///import java.awt.geom.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GUIDemo {
 
@@ -44,40 +43,73 @@ public class GUIDemo {
     }
 
     public static void main(String[] args) {
+
         JFrame frame = new JFrame("Assignment Submission");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400   , 350);
+        frame.setSize(940, 550);
         frame.setLocationRelativeTo(null);
-        // frame.isResizable(false);
         frame.setResizable(false);
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
-        // Set background color to #458846 (RGB: 69, 136, 70)
-        Color darkGreen = new Color(69, 136, 70);
+        Color darkGreen = new Color(45, 88, 46);
         panel.setBackground(darkGreen);
 
         // Course selection
         JPanel coursePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         coursePanel.setBackground(darkGreen);
-        JLabel courseLabel = new StrokeLabel("Select Course:");
-        String[] courses = {"Math", "Science", "History", "Computer Science"};
+        JLabel courseLabel = new StrokeLabel("Select Course:     ");
+        String[] courses = {
+            "PE 2",
+                "OOP   ",
+                    "DISCRETE   ",
+                        " NET 1 "
+        };
         JComboBox<String> courseComboBox = new JComboBox<>(courses);
-        courseComboBox.setPreferredSize(new Dimension(180, 25));
+        courseComboBox.setPreferredSize(new Dimension(300, 75));
         coursePanel.add(courseLabel);
         coursePanel.add(courseComboBox);
 
-        // Assignment title
+        // Assignment titles per course
+        Map<String, String[]> assignmentTitlesMap = new HashMap<>();
+        assignmentTitlesMap.put("PE 2", new String[]{
+                                    "Lab 1",
+                                         "Lab 2", 
+                                            "Quiz"});
+        assignmentTitlesMap.put("OOP   ", new String[]{
+                                    "Project", 
+                                        "Lab 1",
+                                            "Lab 2"});
+        assignmentTitlesMap.put("DISCRETE   ", new String[]{
+                                    "Homework",
+                                        "Quiz",
+                                            "Project"});
+        assignmentTitlesMap.put(" NET 1 ", new String[]{
+                                        "Lab 1",
+                                            "Lab 2",
+                                                "Homework"});
+
+        // Assignment title (as a dropdown selection)
         JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         titlePanel.setBackground(darkGreen);
-        JLabel titleLabel = new StrokeLabel("Assignment Title:");
-        JTextField assignmentField = new JTextField();
-        assignmentField.setPreferredSize(new Dimension(180, 25));
-        assignmentField.setBackground(new Color(245, 245, 220));
-        assignmentField.setForeground(Color.black);
-        assignmentField.setFont(new Font("SansSerif", Font.BOLD, 14));
-        titlePanel.add(titleLabel);
-        titlePanel.add(assignmentField);
+
+        JLabel titleLabel2 = new StrokeLabel("Assignment Title:");
+        JComboBox<String> assignmentComboBox = new JComboBox<>(assignmentTitlesMap.get(courses[0]));
+        assignmentComboBox.setPreferredSize(new Dimension(800, 50));
+        assignmentComboBox.setBackground(new Color(245, 245, 220));
+        assignmentComboBox.setForeground(Color.black);
+        assignmentComboBox.setFont(new Font("SansSerif", Font.BOLD, 14));
+        titlePanel.add(titleLabel2);
+        titlePanel.add(assignmentComboBox);
+
+        // Update assignmentComboBox when course changes
+        courseComboBox.addActionListener(e -> {
+            String selectedCourse = (String) courseComboBox.getSelectedItem();
+            assignmentComboBox.removeAllItems();
+            for (String title : assignmentTitlesMap.get(selectedCourse)) {
+                assignmentComboBox.addItem(title);
+            }
+        });
 
         // Assignment text
         JPanel textPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -90,7 +122,7 @@ public class GUIDemo {
         descriptionArea.setForeground(Color.black);
         descriptionArea.setFont(new Font("SansSerif", Font.BOLD, 14));
         JScrollPane scrollPane = new JScrollPane(descriptionArea);
-        scrollPane.setPreferredSize(new Dimension(180, 70));
+        scrollPane.setPreferredSize(new Dimension(800, 200));
         textPanel.add(textLabel);
         textPanel.add(scrollPane);
 
@@ -114,10 +146,10 @@ public class GUIDemo {
         // Button action
         submitButton.addActionListener(e -> {
             String selectedCourse = (String) courseComboBox.getSelectedItem();
-            String assignmentTitle = assignmentField.getText().trim();
+            String assignmentTitle = (String) assignmentComboBox.getSelectedItem();
             String assignmentText = descriptionArea.getText().trim();
 
-            if (assignmentTitle.isEmpty()) {
+            if (assignmentTitle == null || assignmentTitle.isEmpty()) {
                 confirmationLabel.setText("Assignment title cannot be blank!");
                 return;
             }
@@ -137,3 +169,4 @@ public class GUIDemo {
         frame.setVisible(true);
     }
 }
+
