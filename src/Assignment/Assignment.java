@@ -8,24 +8,21 @@ public class Assignment {
 
 	// Constructor for the Assignment class with validation
 	public Assignment(String title, String description, LocalDate dueDate) {
-		// Validate the title and description
+		// Validates the title and description
+		// Throws IllegalArgumentException if any argument is invalid
 		if (title == null || title.isEmpty()) {
-			System.out.println("Error: Title cannot be empty.");
-			return;
+			throw new IllegalArgumentException("Error: Title cannot be empty.");
 		}
 		if (description == null || description.isEmpty()) {
-			System.out.println("Error: Description cannot be empty.");
-			return;
+			throw new IllegalArgumentException("Error: Description cannot be empty.");
 		}
 
 		// Validate that the due date is not in the past
 		if (dueDate == null) {
-			System.out.println("Error: Due date cannot be null.");
-			return;
+			throw new IllegalArgumentException("Error: Due date cannot be null.");
 		}
 		if (dueDate.isBefore(LocalDate.now())) {
-			System.out.println("Error: Due date cannot be in the past.");
-			return;
+			throw new IllegalArgumentException("Error: Due date cannot be in the past.");
 		}
 
 		// Assign values to the instance variables
@@ -73,5 +70,21 @@ public class Assignment {
 	public String formattedDueDate() {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd yyyy");
 		return dueDate.format(formatter);
+	}
+
+	// Boolean method that returns true if all fields are non-null and due date is
+	// not in the past
+	public boolean isValid() {
+		return title != null && description != null && dueDate != null && !dueDate.isBefore(LocalDate.now());
+	}
+
+	// Returns string representation of assignment with it's title, description, and
+	// formatted due date
+	public String toFileString() {
+		return "Assignment {" +
+				"Title='" + title + '\'' +
+				", Description='" + description + '\'' +
+				", Due Date='" + formattedDueDate() + '\'' +
+				'}';
 	}
 }
