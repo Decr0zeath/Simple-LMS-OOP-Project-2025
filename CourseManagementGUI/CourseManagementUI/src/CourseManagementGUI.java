@@ -1,15 +1,18 @@
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import java.awt.Color;
-import java.awt.Image;
+import javax.swing.JPanel;
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.BorderFactory;
+import javax.swing.border.LineBorder;
+import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.border.LineBorder;
+
 
 public class CourseManagementGUI {
 	
@@ -58,48 +61,47 @@ public class CourseManagementGUI {
             viewGradeButton.setVerticalTextPosition(SwingConstants.BOTTOM); 
             styleFlatButton(viewGradeButton);
            
-            // Dashboard
-            JButton courseSubject = new JButton(
-            	    "<html>"
-            	    + "<div style='text-align: left; padding-left: 10px; padding-bottom: 10px;'>"
-            	    + "<b>CS101</b><br>" // Bold Course ID
-            	    + "Object Oriented Programming<br>" // Normal Course Name
-            	    + "Engr. Violdan Bayocot" // Normal Teacher
-            	    + "</div>"
-            	    + "</html>"
-            	);
-            courseSubject.setBounds(10, 160, 250, 150);
-            courseSubject.setBorder(new javax.swing.border.EmptyBorder(15, 20, 15, 20));
-            courseSubject.setHorizontalAlignment(SwingConstants.LEFT);
-            courseSubject.setVerticalAlignment(SwingConstants.BOTTOM);
-            Color randomColor = getRandomColor();
-            styleCourseSubject(courseSubject, randomColor);
+            // Card Panel
+			JPanel cardPanel = new JPanel(null); 
+			cardPanel.setBounds(20, 120, 940, 550);
+			cardPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+			cardPanel.setBackground(Color.LIGHT_GRAY); 
 
+			// Dashboard (Course Subject Button)
+			JButton courseSubject = new JButton(
+				"<html>"
+				+ "<div style='text-align: left; padding-left: 10px; padding-bottom: 10px;'>"
+				+ "<b>SCS101</b><br>"  //courseID
+				+ "Programming 1<br>"  //courseName
+				+ "John Smith"         //TeacherInfo
+				+ "</div>"
+				+ "</html>"
+			);
+			courseSubject.setBounds(25, 25, 225, 150); 
+			courseSubject.setBorder(new javax.swing.border.EmptyBorder(15, 20, 15, 20));
+			courseSubject.setHorizontalAlignment(SwingConstants.LEFT);
+			courseSubject.setVerticalAlignment(SwingConstants.BOTTOM);
+			Color skyBlue = new Color(0x87CEEB); // Hex to RGB
+			styleCourseSubject(courseSubject, skyBlue);
 
             // Add to frame
             LMS.setLocationRelativeTo(null);
             LMS.setVisible(true);
             LMS.setIconImage(logoIcon.getImage());
-            
+			
             LMS.add(viewCourseButton);
-            LMS.add(viewAssignmentButton);
-            LMS.add(viewGradeButton);
+			LMS.add(viewAssignmentButton);
+			LMS.add(viewGradeButton);
+			LMS.add(cardPanel);
             
-            LMS.add(courseSubject);
-        
+			cardPanel.add(courseSubject);
         });
     }
-	
-	//Random Color 
-	private static Color getRandomColor() {
-	    int r = (int) (Math.random() * 256);
-	    int g = (int) (Math.random() * 256);
-	    int b = (int) (Math.random() * 256);
-	    return new Color(r, g, b);
-	}
+
 	//Customize Navigation Buttons
 	private static void styleFlatButton(JButton button) {
 	    button.setFocusPainted(false);
+		button.setContentAreaFilled(false);
 	    button.setOpaque(true); // Make background color visible
 	    button.setBackground(new Color(0, 128, 0)); // Green background by default
 	    button.setForeground(Color.BLACK); // Black text by default
@@ -118,24 +120,28 @@ public class CourseManagementGUI {
 	        }
 	    });
 	}
-	
-	//Customize Course Subject
-	private static void styleCourseSubject(JButton button, Color randomColor) {
-		 button.setFocusPainted(false);
-		    button.setOpaque(true);
-		    button.setBackground(randomColor); 
-		    button.setForeground(Color.BLACK);
-		    button.setBorder(new LineBorder(Color.BLACK, 2));
-		    button.addMouseListener(new MouseAdapter() {
-		        public void mouseEntered(MouseEvent e) {
-		            button.setBorder(new LineBorder(new Color(50, 50, 50), 4));
-		            button.setBackground(randomColor.darker());
-		        }
 
-		        public void mouseExited(MouseEvent e) {
-		            button.setBorder(new LineBorder(Color.BLACK, 2));
-		            button.setBackground(randomColor);
-		        }
-		    });
+	//Customize Course Subject
+	private static void styleCourseSubject(JButton button, Color color) {
+    button.setFocusPainted(false);
+    button.setFocusable(false);
+    button.setRequestFocusEnabled(false);
+    button.setContentAreaFilled(false); 
+    button.setOpaque(true);           
+    button.setBackground(color);
+    button.setForeground(Color.BLACK);
+    button.setBorder(new LineBorder(Color.BLACK, 2));
+
+    button.addMouseListener(new MouseAdapter() {
+        public void mouseEntered(MouseEvent e) {
+            button.setBorder(new LineBorder(new Color(50, 50, 50), 4));
+            button.setBackground(color.darker());
+        }
+
+        public void mouseExited(MouseEvent e) {
+            button.setBorder(new LineBorder(Color.BLACK, 2));
+            button.setBackground(color);
+        }
+    });
 	}
 }
