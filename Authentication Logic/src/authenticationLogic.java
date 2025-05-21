@@ -1,7 +1,9 @@
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.io.BufferedReader;
+import java.io.FileReader;
 
-public class AuthenticationLogic {
+public class authenticationLogic {
 
     // Hash the password using SHA-512
     public static String hashPassword(String password) {
