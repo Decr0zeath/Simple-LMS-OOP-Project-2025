@@ -24,11 +24,11 @@ public class Dashboard {
         coursePanel.add(new JButton("Course Panel"));
 
         JPanel toDoPanel = new JPanel();
-        toDoPanel.setBackground(Color.CYAN);
+        toDoPanel.setBackground(Color.GRAY);
         toDoPanel.add(new JButton("To-Do Panel"));
 
         JPanel gradePanel = new JPanel();
-        gradePanel.setBackground(Color.YELLOW);
+        gradePanel.setBackground(Color.WHITE);
         gradePanel.add(new JButton("Grade Panel"));
 
         cardPanel.add(coursePanel, "Courses");
@@ -198,24 +198,25 @@ public class Dashboard {
         button.setRolloverEnabled(true);
 
         button.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseEntered(MouseEvent e) {
                 button.setForeground(Color.WHITE);
                 if (hoverIcon != null) button.setIcon(hoverIcon);
                 button.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
             }
-
+            @Override
             public void mouseExited(MouseEvent e) {
                 button.setForeground(Color.BLACK);
                 if (defaultIcon != null) button.setIcon(defaultIcon);
                 button.setBorder(null);
                 button.setBackground(new Color(0, 128, 0));
             }
-
+            @Override
             public void mousePressed(MouseEvent e) {
                 button.setBackground(pressedColor);
                 button.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
             }
-
+            @Override
             public void mouseReleased(MouseEvent e) {
                 button.setBackground(new Color(0, 128, 0));
                 button.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
