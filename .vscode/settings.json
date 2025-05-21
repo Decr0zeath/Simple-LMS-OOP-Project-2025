@@ -1,0 +1,7 @@
+{
+    "java.project.sourcePaths": [
+        "CourseManagementGUI",
+        "CourseManagementGUI\\CourseManagementUI\\src"
+    ],
+    "java.project.referencedLibraries": []
+}
