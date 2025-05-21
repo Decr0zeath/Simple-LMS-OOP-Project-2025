@@ -142,7 +142,7 @@ public class LoginUI {
         gbc.gridy++;
         regPanel.add(new JLabel("Year Level:"), gbc);
         gbc.gridx = 1;
-        JComboBox<String> yearCombo = new JComboBox<>(new String[]{"1", "2", "3", "4"});
+        JComboBox<String> yearCombo = new JComboBox<>(new String[]{"Select Year", "1", "2", "3", "4"});
         yearCombo.setPreferredSize(new Dimension(300, 30));
         regPanel.add(yearCombo, gbc);
 
@@ -175,6 +175,7 @@ public class LoginUI {
 
     private static String[] getDegrees() {
         return new String[]{
+            "Select Degree",
             "Bachelor of Arts in Communication", "Bachelor of Arts in Marketing Communication",
             "Bachelor of Arts in Journalism", "Bachelor of Arts in English Language Studies",
             "Bachelor of Arts in International Studies", "Bachelor of Arts in Political Science",
