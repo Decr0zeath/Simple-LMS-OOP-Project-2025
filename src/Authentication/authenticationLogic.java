@@ -1,7 +1,7 @@
+package Authentication;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.io.BufferedReader;
-import java.io.FileReader;
 
 public class authenticationLogic {
 
