@@ -1,44 +1,45 @@
-package StudentTeacher;
+package Course;
 
-import java.util.List;
+import StudentTeacher.Teacher;
+import StudentTeacher.student;
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import StudentTeacher.student;
-import StudentTeacher.Teacher;
+import java.util.List;
 
 public class Course {
     private final String courseId;
     private final String courseName;
     private List<Teacher> teachers;
-    private List<Student> enrolledStudents;
+    private List<student> enrolledStudents;
 
     public Course(String courseId, String courseName, Teacher... teachers) {
         this.courseId = courseId;
         this.courseName = courseName;
         this.teachers = Arrays.asList(teachers);
-         this.enrolledStudents = new ArrayList<>();
+        this.enrolledStudents = new ArrayList<>();
     }
 
     public String getCourseId() {
         return courseId;
     }
 
-    public String getCourseName() {     
+    public String getCourseName() {
         return courseName;
     }
 
     public List<Teacher> getTeachers() {
         return teachers;
     }
-    public List<Student> getEnrolledStudents() {
+
+    public List<student> getEnrolledStudents() {
         return enrolledStudents;
     }
-    public void enrollStudent(Student student) {
+
+    public void enrollStudent(student student) {
         enrolledStudents.add(student);
     }
 
-   public String toFileString() {
+    public String toFileString() {
         StringBuilder sb = new StringBuilder();
         sb.append(courseId).append(",").append(courseName).append(", Teachers: ");
         for (int i = 0; i < teachers.size(); i++) {
@@ -52,7 +53,7 @@ public class Course {
             sb.append("None");
         } else {
             for (int i = 0; i < enrolledStudents.size(); i++) {
-                Student s = enrolledStudents.get(i);
+                student s = enrolledStudents.get(i);
                 sb.append(s.getFirstName()).append(" ").append(s.getLastName());
                 if (i < enrolledStudents.size() - 1) sb.append(" | ");
             }
