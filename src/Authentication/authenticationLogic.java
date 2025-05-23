@@ -1,7 +1,7 @@
+package Authentication;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.io.BufferedReader;
-import java.io.FileReader;
 
 public class authenticationLogic {
 
@@ -34,11 +34,11 @@ public class authenticationLogic {
 
    
     public static String determineRole(String userID) {
-        if (!userID.matches("\\d+")) return "Invalid";
+        if (!userID.matches("\\d+")) return "Invalid ID number";
         int length = userID.length();
         if (length == 5) return "Faculty";
         if (length == 10) return "Student";
-        return "Invalid";
+        return "Invalid ID number";
     }
 
     // Authenticate user ID and password
