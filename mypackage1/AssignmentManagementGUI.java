@@ -5,7 +5,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 // --- Action interface for button 
-interface WindowAction {
+interface WindowAction extends Runnable{
     void execute();
 }
 
@@ -20,7 +20,7 @@ class CourseWindowView {
     JButton addButton, clearButton, cancelButton;
 
     public CourseWindowView() {
-        frame = new JFrame("Course Overview - Add Assignment");
+        frame = new JFrame("University of San Jose-Recoletos");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1000, 800);
         frame.setResizable(false);
@@ -108,12 +108,12 @@ class CourseWindowView {
         JPanel marksPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 10));
         JLabel totalMarksLabel = new JLabel("Total Marks:");
         totalMarksLabel.setFont(new Font("Segoe UI", Font.PLAIN, 20));
-        totalMarksField = new JTextField("100");
+        totalMarksField = new JTextField("");
         totalMarksField.setFont(new Font("Segoe UI", Font.PLAIN, 20));
         totalMarksField.setPreferredSize(new Dimension(100, 35));
         marksPanel.setBackground(new Color(45, 88, 56));
         marksPanel.add(totalMarksLabel);
-        marksPanel.add(totalMarksField);
+        marksPanel.add(totalMarksField); 
         mainPanel.add(marksPanel);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 20));
@@ -146,9 +146,9 @@ class CourseWindowView {
 
 class CourseWindowController {
     private final CourseWindowView view;
-    private final WindowAction onAddAssignment;
+    private final Runnable onAddAssignment;
 
-    public CourseWindowController(CourseWindowView view, WindowAction onAddAssignment) {
+    public CourseWindowController(CourseWindowView view, Runnable onAddAssignment) {
         this.view = view;
         this.onAddAssignment = onAddAssignment;
         attachListeners();
@@ -163,16 +163,37 @@ class CourseWindowController {
             view.dayCombo.setSelectedIndex(0);
             view.totalMarksField.setText("");
         });
+
         view.cancelButton.addActionListener(e -> view.frame.dispose());
+
         view.addButton.addActionListener(e -> {
+        //  Collect Data
+        String title = view.assignmentTitleField.getText().trim();
+        String description = view.descriptionArea.getText().trim();
+        String year = (String) view.yearCombo.getSelectedItem();
+        String month = (String) view.monthCombo.getSelectedItem();
+        String day = (String) view.dayCombo.getSelectedItem();
+
+        int monthNum = Integer.parseInt(month.substring(0, 2));
+        int dayNum = Integer.parseInt(day);
+
+        java.time.LocalDate dueDate = java.time.LocalDate.of(Integer.parseInt(year), monthNum, dayNum);
+
+        try {
+            // Validate and create Assignment object
+            Assignment assignment = new Assignment(title, description, dueDate);
+
             view.frame.dispose();
-            onAddAssignment.execute();
-        });
+            onAddAssignment.run(); 
+        } catch (IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(view.frame, ex.getMessage(), "Input Error", JOptionPane.ERROR_MESSAGE);
+        }
+    });
     }
 }
 
 // --- GUIDemo:
-class GUIDemo {
+/*class GUIDemo {
     JFrame frame;
 
     public GUIDemo() {
@@ -185,10 +206,10 @@ class GUIDemo {
         frame.add(label);
         frame.setVisible(true);
     }
-}
+}*/
 
 // --- Main class
-public class Main {
+public class AssignmentManagementGUI {
     public static void main(String[] args){
         try {
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
@@ -197,7 +218,8 @@ public class Main {
         }
 
         CourseWindowView view = new CourseWindowView();
-        new CourseWindowController(view, () -> new GUIDemo());
+        new CourseWindowController(view, () -> new AssignmentSubmissionForm());
+        // CHANGED: This will now open AssignmentSubmissionForm
         view.show();
     }
 }
