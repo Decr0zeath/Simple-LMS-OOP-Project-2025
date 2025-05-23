@@ -4,12 +4,12 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-// --- Action interface for button 
+//  Action interface for button 
 interface WindowAction extends Runnable{
     void execute();
 }
 
-// --- CourseWindowView
+//  CourseWindowView
 class CourseWindowView {
     JFrame frame;
     JComboBox<String> courseCombo;
@@ -173,6 +173,12 @@ class CourseWindowController {
         String year = (String) view.yearCombo.getSelectedItem();
         String month = (String) view.monthCombo.getSelectedItem();
         String day = (String) view.dayCombo.getSelectedItem();
+        String totalMarks = view.totalMarksField.getText().trim();
+
+        if (totalMarks.isEmpty()){
+            JOptionPane.showMessageDialog(view.frame, "Input the total marks", "Input Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
         int monthNum = Integer.parseInt(month.substring(0, 2));
         int dayNum = Integer.parseInt(day);
@@ -208,7 +214,7 @@ class CourseWindowController {
     }
 }*/
 
-// --- Main class
+//  Main class
 public class AssignmentManagementGUI {
     public static void main(String[] args){
         try {
