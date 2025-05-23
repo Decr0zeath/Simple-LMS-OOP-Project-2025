@@ -1,4 +1,4 @@
-package Dashboard;
+package src.Dashboard;
 
 import java.awt.*;
 import java.awt.event.*;
