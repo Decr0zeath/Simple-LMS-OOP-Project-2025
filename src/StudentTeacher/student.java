@@ -1,10 +1,10 @@
 package StudentTeacher;
 
-public class student extends user{
+public class Student{
     private String degree;
     private int year;
 
-    public student(String firstName, String lastName, String accountID, String password, String degree, int year) {
+    public Student(String firstName, String lastName, String accountID, String password, String degree, int year) {
         super(firstName, lastName, accountID, password, "Student");  
         this.degree = degree;
         this.year = year;

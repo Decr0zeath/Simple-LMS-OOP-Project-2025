@@ -1,6 +1,6 @@
 package StudentTeacher;
 
-public class Teacher extends user {
+public class Teacher{
     private String course;
     public Teacher(String firstName, String lastName, String accountID, String password, String course) {
         super(firstName, lastName, accountID, password, "Teacher");
