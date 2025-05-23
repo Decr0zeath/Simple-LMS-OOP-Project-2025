@@ -15,7 +15,7 @@ public class Dashboard {
 
         LMS.setResizable(false);
 
-        ImageIcon logoIcon = loadIcon("resources/logo.png");
+        ImageIcon logoIcon = loadIcon("/resources/logo.png");
 
         JPanel cardPanel = new JPanel(new CardLayout());
 
@@ -36,14 +36,14 @@ public class Dashboard {
         cardPanel.add(gradePanel, "Grades");
 
         // Load and resize icons
-        ImageIcon courseIcon = resizeIcon(loadIcon("resources/courses.png"));
-        ImageIcon courseHoverIcon = resizeIcon(loadIcon("resources/courses_white.png"));
-        ImageIcon toDoIcon = resizeIcon(loadIcon("resources/assignment.png"));
-        ImageIcon toDoHoverIcon = resizeIcon(loadIcon("resources/assignment_white.png"));
-        ImageIcon gradeIcon = resizeIcon(loadIcon("resources/grade.png"));
-        ImageIcon gradeHoverIcon = resizeIcon(loadIcon("resources/grade_white.png"));
-        ImageIcon profileIcon = resizeIcon(loadIcon("resources/profile.png"));
-        ImageIcon profileHoverIcon = resizeIcon(loadIcon("resources/profile_white.png"));
+        ImageIcon courseIcon = resizeIcon(loadIcon("/resources/courses.png"));
+        ImageIcon courseHoverIcon = resizeIcon(loadIcon("/resources/courses_white.png"));
+        ImageIcon toDoIcon = resizeIcon(loadIcon("/resources/assignment.png"));
+        ImageIcon toDoHoverIcon = resizeIcon(loadIcon("/resources/assignment_white.png"));
+        ImageIcon gradeIcon = resizeIcon(loadIcon("/resources/grade.png"));
+        ImageIcon gradeHoverIcon = resizeIcon(loadIcon("/resources/grade_white.png"));
+        ImageIcon profileIcon = resizeIcon(loadIcon("/resources/profile.png"));
+        ImageIcon profileHoverIcon = resizeIcon(loadIcon("/resources/profile_white.png"));
 
         int buttonWidth = 250;
         int buttonHeight = 100;

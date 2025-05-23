@@ -1,7 +1,6 @@
+import java.awt.*;
 import javax.swing.*;
 import javax.swing.text.*;
-import java.awt.*;
-import java.awt.event.*;
 
 public class LoginPanel extends JPanel {
     private JTextField userID;
