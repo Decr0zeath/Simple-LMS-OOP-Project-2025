@@ -10,15 +10,3 @@ Assignment: Project 1
 Subject: CS102 - Computer Science 102
 Grade: 93.5
 
-John,Doe,T001,password123,BSIT,2
-Jane,Smith,T002,password456,BSCS,3
-Alice,Johnson,T003,password789,BSED,1
-Bob,Brown,T004,password101,BSA,4
-Assignment Submitted: Assignment {Title='Project 1', Description='Create a class system', Due Date='Dec 31 2025'}
-By: Ella Reyes
-Subject: CS102 - Computer Science 102
-
-Assignment: Project 1
-Subject: CS102 - Computer Science 102
-Grade: 93.5
-
