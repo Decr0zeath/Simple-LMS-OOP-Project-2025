@@ -1,15 +1,15 @@
-package src.DataSaving;
+package DataSaving;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public class assignmentInfo {
+public class AssignmentInfo {
     private String title;
 	private String description;
 	private LocalDate dueDate;
 
 	// Constructor for the Assignment class with validation
-	public assignmentInfo(String title, String description, LocalDate dueDate) {
+	public AssignmentInfo(String title, String description, LocalDate dueDate) {
 		// Validate the title and description
 		if (title == null || title.isEmpty()) {
 			System.out.println("Error: Title cannot be empty.");

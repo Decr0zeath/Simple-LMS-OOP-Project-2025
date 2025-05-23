@@ -1,4 +1,4 @@
-package src.DataSaving;
+package DataSaving;
 
 import java.io.File;
 import java.io.IOException; 
@@ -94,7 +94,7 @@ public class FileHandle {
         }
 }
     //Function nga ma save sa student file (assignment nga gisubmit, info sa student and info sa assignment, og asa nga subject)
-    public void submissionFunc(assignmentInfo assignment, StudentInfo student, SubjectInfo subject) throws IOException {
+    public void submissionFunc(AssignmentInfo assignment, StudentInfo student, SubjectInfo subject) throws IOException {
     try {
         // Append the assignment submission to the student file
         FileWriter studentWriter = new FileWriter("newStudent.txt", true);
