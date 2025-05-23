@@ -10,10 +10,10 @@ public class Assignment {
 	public Assignment(String title, String description, LocalDate dueDate) {
 		// Validates the title and description
 		// Throws IllegalArgumentException if any argument is invalid
-		if (title == null || title.isEmpty()) {
+		if (title == null || title.trim().isEmpty()) {
 			throw new IllegalArgumentException("Error: Title cannot be empty.");
 		}
-		if (description == null || description.isEmpty()) {
+		if (description == null || description.trim().isEmpty()) {
 			throw new IllegalArgumentException("Error: Description cannot be empty.");
 		}
 
