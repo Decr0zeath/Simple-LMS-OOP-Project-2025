@@ -1,7 +1,7 @@
 package Course;
 
+import StudentTeacher.Student;
 import StudentTeacher.Teacher;
-import StudentTeacher.student;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,7 +10,7 @@ public class Course {
     private final String courseId;
     private final String courseName;
     private List<Teacher> teachers;
-    private List<student> enrolledStudents;
+    private List<Student> enrolledStudents;
 
     public Course(String courseId, String courseName, Teacher... teachers) {
         this.courseId = courseId;
@@ -31,11 +31,11 @@ public class Course {
         return teachers;
     }
 
-    public List<student> getEnrolledStudents() {
+    public List<Student> getEnrolledStudents() {
         return enrolledStudents;
     }
 
-    public void enrollStudent(student student) {
+    public void enrollStudent(Student student) {
         enrolledStudents.add(student);
     }
 
@@ -53,7 +53,7 @@ public class Course {
             sb.append("None");
         } else {
             for (int i = 0; i < enrolledStudents.size(); i++) {
-                student s = enrolledStudents.get(i);
+                Student s = enrolledStudents.get(i);
                 sb.append(s.getFirstName()).append(" ").append(s.getLastName());
                 if (i < enrolledStudents.size() - 1) sb.append(" | ");
             }
