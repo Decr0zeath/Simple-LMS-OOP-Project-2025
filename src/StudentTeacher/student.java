@@ -1,6 +1,8 @@
 package StudentTeacher;
 
-public class Student{
+import User.User;
+
+public class Student extends User {
     private String degree;
     private int year;
 
@@ -17,6 +19,7 @@ public class Student{
     public int getYear() {
         return year;
     }
+
     public void setDegree(String degree) {
         this.degree = degree;
     }
@@ -26,6 +29,6 @@ public class Student{
     }
 
     public String toFileString() {
-        return firstName + "," + lastName + "," + accountID + "," + password + "," + degree + "," + year;
+        return getFirstName() + "," + getLastName() + "," + getAccountID() + "," + getPassword() + "," + degree + "," + year;
     }
 }

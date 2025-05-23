@@ -1,6 +1,8 @@
 package StudentTeacher;
 
-public class Teacher{
+import User.User;
+
+public class Teacher extends User{
     private String course;
     public Teacher(String firstName, String lastName, String accountID, String password, String course) {
         super(firstName, lastName, accountID, password, "Teacher");
