@@ -1,4 +1,4 @@
-package DataSaving;
+package src.DataSaving;
 
 public class StudentInfo {
     private String firstName;
