@@ -1,0 +1,33 @@
+SCS101,Programming 1, Teachers: John Doe | Jane Smith, Enrolled Students: None
+SCS102,Web Development, Teachers: Jane Smith | Alice Johnson, Enrolled Students: None
+SCS103,Digital Visual Arts, Teachers: John Doe | Alice Johnson, Enrolled Students: None
+SCS104,Introduction to Cyber Security, Teachers: Alice Johnson, Enrolled Students: None
+SCS105,Data Structures and Algorithms, Teachers: John Doe | Jane Smith, Enrolled Students: None
+Assignment Submission Received from: Ella Reyes
+For Subject: CS102 - Computer Science 102
+
+Graded Assignment:
+Student: Ella Reyes
+Subject: CS102 - Computer Science 102
+Assignment: Project 1
+Grade: 93.5
+
+SCS101,Programming 1, Teachers: John Doe | Jane Smith, Enrolled Students: None
+SCS102,Web Development, Teachers: Jane Smith | Alice Johnson, Enrolled Students: None
+SCS103,Digital Visual Arts, Teachers: John Doe | Alice Johnson, Enrolled Students: None
+SCS104,Introduction to Cyber Security, Teachers: Alice Johnson, Enrolled Students: None
+SCS105,Data Structures and Algorithms, Teachers: John Doe | Jane Smith, Enrolled Students: None
+Assignment Submission Received from: Ella Reyes
+For Subject: CS102 - Computer Science 102
+
+Graded Assignment:
+Student: Ella Reyes
+Subject: CS102 - Computer Science 102
+Assignment: Project 1
+Grade: 93.5
+
+Posted Assignment by: John Doe
+Subject: CS101 - Introduction to Computer Science
+Assignment Details:
+Assignment {Title='Midterm Project', Description='Build a simple LMS', Due Date='Nov 15 2025'}
+--------------------------------------------------
