@@ -1,3 +1,5 @@
+package Course;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -12,11 +14,13 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import Course.Course;
+import Dashboard.Dashboard;
 
 
 public class CourseManagementGUI {
 	
-	public static void main(String[] args) {
+	public static void CourseManagement(String[] args) {
 		
         SwingUtilities.invokeLater(() -> {
         	// Frame
@@ -25,9 +29,6 @@ public class CourseManagementGUI {
             LMS.setSize(1000, 730);
             LMS.setLayout(null);
 			LMS.setBackground(Color.lightGray); 
-            
-            // LMS-Logo
-            ImageIcon logoIcon = new ImageIcon(CourseManagementGUI.class.getResource("/resources/lms-logo.png"));
 
             // ===== Course Button =====
             ImageIcon courseIcon = new ImageIcon(CourseManagementGUI.class.getResource("/resources/course-logo.png"));
@@ -67,7 +68,7 @@ public class CourseManagementGUI {
 				JButton courseSubject1 = new JButton(
 					"<html>"
 					+ "<div style='text-align: left; padding-left: 10px; padding-bottom: 10px;'>"
-					+ "<b>" + courseID1 + "</b><br>"
+					+ "<b>" + courseID1 + "</b>"
 					+ courseName1 + "<br>"
 					+ teacherInfo1 + " & " + teacherInfo2
 					+ "</div>"
