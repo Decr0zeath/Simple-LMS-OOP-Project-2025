@@ -4,11 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 
-
-import java.io.BufferedReader;
-import java.io.FileReader;
-
-
 public class AssignmentSubmissionForm {
 
     private JFrame frame;
