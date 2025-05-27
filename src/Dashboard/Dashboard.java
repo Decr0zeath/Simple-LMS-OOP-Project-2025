@@ -1,5 +1,6 @@
 package Dashboard;
 
+import Course.CourseManagementGUI;
 import java.awt.*;
 import java.awt.event.*;
 import java.net.URL;
@@ -19,10 +20,7 @@ public class Dashboard {
 
         JPanel cardPanel = new JPanel(new CardLayout());
 
-        JPanel coursePanel = new JPanel();
-        coursePanel.setBackground(Color.LIGHT_GRAY);
-        coursePanel.add(new JButton("Course Panel"));
-
+        CourseManagementGUI coursePanel = new CourseManagementGUI(); // updated
         JPanel toDoPanel = new JPanel();
         toDoPanel.setBackground(Color.GRAY);
         toDoPanel.add(new JButton("To-Do Panel"));
@@ -70,7 +68,12 @@ public class Dashboard {
             styleFlatButton(btn, defaultIcons[i], hoverIcons[i]);
             if (i < 3) {
                 final String name = panelNames[i];
-                btn.addActionListener(e -> showPanel(cardPanel, name));
+                btn.addActionListener(e -> {
+                    if (name.equals("Courses")) {
+                        coursePanel.resetToCourseButtons(); // reset view when clicked again
+                    }
+                    showPanel(cardPanel, name);
+                });
             }
             headerPanel.add(btn);
         }
@@ -128,7 +131,7 @@ public class Dashboard {
 
         LMS.add(headerPanel);
         LMS.add(cardPanel);
-        cardPanel.setBounds(20, 120, 940, 550);
+        cardPanel.setBounds(20, 120, 945, 550);
         cardPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
 
         LMS.setLocationRelativeTo(null);
@@ -137,7 +140,7 @@ public class Dashboard {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(Dashboard::new); // Call constructor from main
+        SwingUtilities.invokeLater(Dashboard::new);
     }
 
     private static void openProfileFrame() {
