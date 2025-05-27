@@ -1,4 +1,4 @@
-package GradeSystem;    
+package GradeAssign;
 
 import java.awt.*;
 import javax.swing.*;
@@ -21,3 +21,4 @@ public class TotalLabelPanel {
         totalLabel.setText("Total Marks: " + marks + " / Total Possible Marks: " + total);
     }
 }
+

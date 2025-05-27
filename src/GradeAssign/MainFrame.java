@@ -1,13 +1,14 @@
-package GradeSystem;
+package GradeAssign;
 
-import javax.swing.*;
 import java.awt.*;
+import javax.swing.*;
 
 public class MainFrame {
     private JFrame frame;
     private TablePanel tablePanel;
     private TotalLabelPanel totalLabelPanel;
     private ButtonPanel buttonPanel;
+    private StudentGradeManager gradeManager;
 
     public MainFrame() {
         frame = new JFrame("OSCS LMS");
@@ -16,14 +17,19 @@ public class MainFrame {
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
 
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BorderLayout(10, 10)); 
+        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         mainPanel.setBackground(new Color(0x458846));
 
         tablePanel = new TablePanel();
         totalLabelPanel = new TotalLabelPanel();
-        buttonPanel = new ButtonPanel(tablePanel, totalLabelPanel);
+        gradeManager = new StudentGradeManager();
+
+        gradeManager.addStudent(null, getDefaultData());
+        gradeManager.addStudent(null, getDefaultData());
+        gradeManager.addStudent(null, getDefaultData());
+
+        buttonPanel = new ButtonPanel(tablePanel, totalLabelPanel, gradeManager);
 
         mainPanel.add(buttonPanel.getPanel(), BorderLayout.NORTH);
         mainPanel.add(tablePanel.getScrollPane(), BorderLayout.CENTER);
@@ -34,5 +40,20 @@ public class MainFrame {
 
     public void show() {
         frame.setVisible(true);
+    }
+
+    private Object[][] getDefaultData() {
+        return new Object[][] {
+            {null, 0, null, "0"},
+            {null, 0, null, "0"},
+            {null, 0, null, "0"},
+            {null, 0, null, "0"}
+        };
+    }
+
+    public static void main(String[] args) {
+        MainFrame mainFrame = new MainFrame();
+        mainFrame.show();
+
     }
 }
