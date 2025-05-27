@@ -2,7 +2,7 @@ package StudentTeacher;
 
 import User.User;
 
-public class Student extends User {
+public class Student extends User{
     private String degree;
     private int year;
 
@@ -29,6 +29,6 @@ public class Student extends User {
     }
 
     public String toFileString() {
-        return getFirstName() + "," + getLastName() + "," + getAccountID() + "," + getPassword() + "," + degree + "," + year;
+        return getFirstName() + "," + getLastName() + "," + getAccountID() + "," + getPassword() + "," + degree + "," + year + "," + role;
     }
 }

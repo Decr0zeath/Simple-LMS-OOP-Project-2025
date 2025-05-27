@@ -8,6 +8,6 @@ public class Teacher extends User{
 
     }
     public String toFileString() {
-        return firstName + "," + lastName + "," + accountID + "," + password;
+        return firstName + "," + lastName + "," + accountID + "," + password + "," + role;
     }
 }
