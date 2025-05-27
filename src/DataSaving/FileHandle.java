@@ -3,7 +3,6 @@ package DataSaving;
 import java.io.File;
 import java.io.IOException;
 import java.io.FileWriter;
-import java.time.LocalDate;
 
 import StudentTeacher.Student;
 import StudentTeacher.Teacher;
@@ -21,7 +20,8 @@ public class FileHandle {
         if (studentFile.exists() && teacherFile.exists()) {
             System.out.println("File Name: " + studentFile.getName());
             System.out.println("File Name: " + teacherFile.getName());
-        } else {
+        } 
+        else {
             if (!studentFile.exists()) {
                 studentFile.createNewFile();
                 System.out.println("File Name: " + studentFile.getName());
@@ -32,35 +32,21 @@ public class FileHandle {
             }
         }
     }
+    //Accepts the inputs of the student from the registration form
+    public void StudentInput(Student student) {
+        try {
+            saveStudent(student);
+        } catch (IOException e) {
+            System.out.println("An error has occurred while saving student.");
+            e.printStackTrace();
+        }
+ }
 
     public void saveStudent(Student student) throws IOException {
         try {
             FileWriter writer = new FileWriter("newStudent.txt", true);
             writer.write(student.toFileString() + "\n");
             writer.close();
-        } catch (IOException e) {
-            System.out.println("An error has occurred.");
-            e.printStackTrace();
-        }
-    }
-
-    public void saveTeacherwithSubject(Teacher teacher, Course subject) throws IOException {
-        try {
-            FileWriter writer = new FileWriter("newTeacher.txt", true);
-            writer.write(teacher.toFileString() + ", Subject: " + subject.getCourseId() + " - " + subject.getCourseName() + "\n");
-            writer.close();
-        } catch (IOException e) {
-            System.out.println("An error has occurred.");
-            e.printStackTrace();
-        }
-    }
-
-    public void StudentInput() {
-        try {
-            saveStudent(new Student(null, null, null, null, null, 0)); 
-            // saveStudent(new StudentInfo("Jane", "Smith", "T002", "password456", "BSCS", 3));
-            // saveStudent(new StudentInfo("Alice", "Johnson", "T003", "password789", "BSED", 1));
-            // saveStudent(new StudentInfo("Bob", "Brown", "T004", "password101", "BSA", 4));
         } catch (IOException e) {
             System.out.println("An error has occurred.");
             e.printStackTrace();
@@ -91,6 +77,17 @@ public class FileHandle {
             e.printStackTrace();
         }
     }
+
+    public void saveTeacherwithSubject(Teacher teacher, Course subject) throws IOException {
+        try {
+            FileWriter writer = new FileWriter("newTeacher.txt", true);
+            writer.write(teacher.toFileString() + ", Subject: " + subject.getCourseId() + " - " + subject.getCourseName() + "\n");
+            writer.close();
+        } catch (IOException e) {
+            System.out.println("An error has occurred.");
+            e.printStackTrace();
+        }
+    }
     //change assignmentInfo
     public void saveSubmission(AssignmentInfo assignment, Student student, Course subject) throws IOException {
         try {
@@ -101,7 +98,7 @@ public class FileHandle {
             studentWriter.close();
 
             FileWriter teacherWriter = new FileWriter("newTeacher.txt", true);
-            teacherWriter.write("Assignment Submission Received from: "
+            teacherWriter.write("Assignment Submitted: " + assignment.toFileString() + "\n" +"Assignment Submission Received from: "
                     + student.getFirstName() + " " + student.getLastName() + "\n"
                     + "For Subject: " + subject.getCourseId() + " - " + subject.getCourseName() + "\n\n");
             teacherWriter.close();
@@ -113,24 +110,18 @@ public class FileHandle {
         }
     }
     //assignmentInfo
-    public void submissionInput() {
-        try {
-            Student student = new Student("Ella", "Reyes", "S002", "pass456", "BSCS", 3);
-            Teacher teacher = new Teacher("John", "Doe", "T001", "password123");
-            Course subject = new Course("CS102", "Computer Science 102", teacher);
-            AssignmentInfo assignment = new AssignmentInfo("Project 1", "Create a class system", LocalDate.of(2025, 12, 31));
-
-            if (assignment.getTitle() == null || assignment.getDescription() == null || assignment.getDueDate() == null) {
-                System.out.println("Assignment creation failed. Submission not saved.");
-                return;
+        public void submissionInput(AssignmentInfo assignment, Student student, Course subject) {
+            try {
+                if (assignment.getTitle() == null || assignment.getDescription() == null || assignment.getDueDate() == null) {
+                    System.out.println("Assignment creation failed. Submission not saved.");
+                    return;
+                }
+                saveSubmission(assignment, student, subject);
+            } catch (IOException e) {
+                System.out.println("An error occurred during submission input.");
+                e.printStackTrace();
             }
-
-            saveSubmission(assignment, student, subject);
-        } catch (IOException e) {
-            System.out.println("An error occurred during submission input.");
-            e.printStackTrace();
         }
-    }
     //assignmentinfo
     public void saveGrade(float grade, Student student, Teacher teacher, Course subject, AssignmentInfo assignment) throws IOException {
         try {
@@ -145,6 +136,7 @@ public class FileHandle {
             FileWriter studentWriter = new FileWriter("newStudent.txt", true);
             studentWriter.write("Assignment: " + assignment.getTitle() + "\n");
             studentWriter.write("Subject: " + subject.getCourseId() + " - " + subject.getCourseName() + "\n");
+            studentWriter.write("Graded by: " + teacher.getFirstName() + " " + teacher.getLastName() + "\n");
             studentWriter.write("Grade: " + grade + "\n\n");
             studentWriter.close();
         } catch (IOException e) {
@@ -152,21 +144,16 @@ public class FileHandle {
             e.printStackTrace();
         }
     }
-    //assignmentinfo
-    public void gradeInput() {
-        try {
-            Student student = new Student("Ella", "Reyes", "S002", "pass456", "BSCS", 3);
-            Teacher teacher = new Teacher("John", "Doe", "T001", "password123");
-            Course subject = new Course("CS102", "Computer Science 102", teacher);
-            AssignmentInfo assignment = new AssignmentInfo("Project 1", "Create a class system", LocalDate.of(2025, 12, 31));
-            float grade = 93.5f;
 
+    //assignmentinfo
+    public void gradeInput(float grade, Student student, Teacher teacher, Course subject, AssignmentInfo assignment) {
+        try {
             saveGrade(grade, student, teacher, subject, assignment);
-        } catch (Exception e) {
+        } catch (IOException e) {
             System.out.println("An error occurred during grade input.");
             e.printStackTrace();
         }
-    }
+}
     //assignmentInfo
     public void savePostedAssignment(Teacher teacher, Course subject, AssignmentInfo assignment) throws IOException {
         try {
@@ -186,33 +173,11 @@ public class FileHandle {
         }
     }
     //assignmentInfo
-    public void postAssignmentInput() {
+   public void postAssignmentInput(Teacher teacher, Course subject, AssignmentInfo assignment) {
         try {
-            Teacher teacher = new Teacher("John", "Doe", "T001", "password123");
-            Course subject = new Course("CS101", "Introduction to Computer Science", teacher);
-            AssignmentInfo assignment = new AssignmentInfo("Midterm Project", "Build a simple LMS", LocalDate.of(2025, 11, 15));
-
-            // Save the posted assignment
             savePostedAssignment(teacher, subject, assignment);
         } catch (IOException e) {
             System.out.println("An error occurred during assignment posting.");
-            e.printStackTrace();
-        }
-    }
-
-
-
-    public static void main(String[] args) {
-        try {
-            fileCreate();
-            FileHandle trial = new FileHandle();
-            trial.StudentInput();
-            trial.teacherInput();
-            trial.submissionInput();
-            trial.gradeInput();
-            trial.postAssignmentInput();
-        } catch (IOException e) {
-            System.out.println("An error has occurred.");
             e.printStackTrace();
         }
     }
