@@ -1,5 +1,10 @@
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.io.IOException;
+import java.util.Scanner;
+import DataSaving.FileHandle; //imports the database
+import java.io.BufferedReader;
+import java.io.FileReader;
 
 public class authenticationLogic {
 
@@ -18,19 +23,17 @@ public class authenticationLogic {
         }
     }
 
-    // simulate retrieving stored hashed password from database
+    
     public static String getStoredPasswordHashFromDB(String userID) {
-        // will replace this logic with real DB retrieval
-  
-        if (userID.equals("12345")) { // Faculty
-            return hashPassword("facultyPassword123");
-        } else if (userID.equals("2025012345")) { // Student
-            return hashPassword("studentPassword123");
+        try {
+            return FileHandle.getPasswordHash(userID);
+        } catch (IOException e) {
+            System.err.println("Error reading user data: " + e.getMessage());
+            return null;
         }
-        return null; 
     }
 
-   
+    
     public static String determineRole(String userID) {
         if (!userID.matches("\\d+")) return "Invalid";
         int length = userID.length();
@@ -39,7 +42,7 @@ public class authenticationLogic {
         return "Invalid";
     }
 
-    // Authenticate user ID and password
+    // Authenticate credentials
     public static String authenticate(String enteredID, String enteredPassword) {
         String role = determineRole(enteredID);
         if (role.equals("Invalid")) return "Invalid";
@@ -49,26 +52,19 @@ public class authenticationLogic {
 
         String enteredHash = hashPassword(enteredPassword);
         if (enteredHash.equals(storedHash)) {
-            return role; // Login successful
+            return role;
         } else {
-            return "Invalid"; // Password does not match
+            return "Invalid"; 
         }
     }
 
-    // Called by the GUI(Andres) on login submission
+    // Handles login from GUI(Andres)
     public static void handleLogin(String enteredID, String enteredPassword) {
         String result = authenticate(enteredID, enteredPassword);
 
         switch (result) {
-            case "Faculty":
-                System.out.println("Login successful");
-                break;
-            case "Student":
-                System.out.println("Login successful");
-                break;
-            default:
-                System.out.println("Invalid ID number or password. Please try again.");
-                break;
+            case "Faculty", "Student" -> System.out.println("Login successful!");
+            default -> System.out.println("Invalid ID number or password. Please try again.");
         }
     }
 
@@ -77,16 +73,19 @@ public class authenticationLogic {
         return hashPassword(plainPassword);
     }
 
-    // main method for testing
+  
     public static void main(String[] args) {
-        System.out.println("Testing Login...");
+        Scanner scanner = new Scanner(System.in);
 
-        handleLogin("12345", "facultyPassword123");
+        System.out.print("User ID: ");
+        String enteredID = scanner.nextLine().trim();
 
-        handleLogin("2025012345", "studentPassword123");
+        System.out.print("Password: ");
+        String enteredPassword = scanner.nextLine().trim();
 
-        handleLogin("2025012345", "wrongPassword");
+        handleLogin(enteredID, enteredPassword);
 
-        handleLogin("111", "password");
+        scanner.close();
     }
 }
+
