@@ -3,6 +3,9 @@ package LoginScreen;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.text.*;
+import Authentication.authenticationLogic;
+import DataSaving.FileHandle;
+import StudentTeacher.Student; 
 
 public class RegistrationPanel extends JPanel {
 
@@ -10,10 +13,13 @@ public class RegistrationPanel extends JPanel {
     private JTextField lastNameField;
     private JTextField accountIdField;
     private JPasswordField passwordField;
+    private JPasswordField retypePasswordField;
     private JComboBox<String> degreeComboBox;
     private JComboBox<String> yearComboBox;
     private CardLayout parentLayout;
     private JPanel parentPanel;
+
+    private FileHandle fileHandle = new FileHandle();
 
     public RegistrationPanel(JPanel parentPanel, CardLayout parentLayout) {
         this.parentPanel = parentPanel;
@@ -46,20 +52,23 @@ public class RegistrationPanel extends JPanel {
         // Input fields labels
         String[] labels = {
             "First Name:", "Last Name:", "Account ID:", "Password:",
-            "Degree Program:", "Year Level:"
+            "Retype Password:", "Degree Program:", "Year Level:"
         };
 
         firstNameField = new JTextField(20);
+        ((AbstractDocument) firstNameField.getDocument()).setDocumentFilter(new LettersOnlyFilter());
         lastNameField = new JTextField(20);
+        ((AbstractDocument) lastNameField.getDocument()).setDocumentFilter(new LettersOnlyFilter());
         accountIdField = new JTextField(20);
         ((AbstractDocument) accountIdField.getDocument()).setDocumentFilter(new NumberOnlyFilter());
         passwordField = new JPasswordField(20);
+        retypePasswordField = new JPasswordField(20);
         degreeComboBox = new JComboBox<>(getDegrees());
         yearComboBox = new JComboBox<>(new String[]{"Select Year", "1", "2", "3", "4"});
 
         Component[] inputs = {
             firstNameField, lastNameField, accountIdField,
-            passwordField, degreeComboBox, yearComboBox
+            passwordField, retypePasswordField, degreeComboBox, yearComboBox
         };
 
         for (int i = 0; i < labels.length; i++) {
@@ -98,8 +107,10 @@ public class RegistrationPanel extends JPanel {
         add(buttonPanel, gbc);
 
         // Button actions
-        cancelBtn.addActionListener(e -> parentLayout.show(parentPanel, "Login"));
-
+        cancelBtn.addActionListener(e -> {
+            clearFields(); // Clear all fields when going back
+            parentLayout.show(parentPanel, "Login");
+        });
         registerBtn.addActionListener(e -> onRegister());
     }
 
@@ -108,17 +119,79 @@ public class RegistrationPanel extends JPanel {
         String lastName = lastNameField.getText().trim();
         String studentId = accountIdField.getText().trim();
         String password = new String(passwordField.getPassword()).trim();
+        String retypePassword = new String(retypePasswordField.getPassword()).trim();
         String degree = (String) degreeComboBox.getSelectedItem();
         String yearLevel = (String) yearComboBox.getSelectedItem();
 
+        // Validation
         if (firstName.isEmpty() || lastName.isEmpty() || studentId.isEmpty() ||
-            password.isEmpty() || degree.equals("Select Degree") || yearLevel.equals("Select Year")) {
-            JOptionPane.showMessageDialog(this, "Please complete all fields.", "Validation Error", JOptionPane.ERROR_MESSAGE);
+            password.isEmpty() || retypePassword.isEmpty() ||
+            degree.equals("Select Degree") || yearLevel.equals("Select Year")) {
+            JOptionPane.showMessageDialog(this, "Please complete all fields.",
+                "Validation Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        JOptionPane.showMessageDialog(this, "Congratulations, you are registered!");
-        parentLayout.show(parentPanel, "Login");
+        // Check if passwords match
+        if (!password.equals(retypePassword)) {
+            JOptionPane.showMessageDialog(this, "Passwords do not match.",
+                "Validation Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Validate student ID format (must be 10 digits)
+        if (!studentId.matches("\\d{10}")) {
+            JOptionPane.showMessageDialog(this,
+                "Student ID must be 10 digits long.",
+                "Validation Error",
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        try {
+            // Hash the password
+            String hashedPassword = authenticationLogic.handleRegistrationPasswordHash(password);
+
+            // Create new Student object (not StudentInfo)
+            Student newStudent = new Student(
+                firstName,
+                lastName,
+                studentId,
+                hashedPassword,
+                degree,
+                Integer.parseInt(yearLevel)
+            );
+
+            // Save student using FileHandle
+            FileHandle.fileCreate();
+            fileHandle.saveStudent(newStudent);
+
+            JOptionPane.showMessageDialog(this,
+                "Registration successful! Please login with your credentials.",
+                "Success",
+                JOptionPane.INFORMATION_MESSAGE);
+
+            // Clear fields and return to login
+            clearFields();
+            parentLayout.show(parentPanel, "Login");
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                "An error occurred during registration: " + e.getMessage(),
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+
+    private void clearFields() {
+        firstNameField.setText("");
+        lastNameField.setText("");
+        accountIdField.setText("");
+        passwordField.setText("");
+        retypePasswordField.setText("");
+        degreeComboBox.setSelectedIndex(0);
+        yearComboBox.setSelectedIndex(0);
     }
 
     private String[] getDegrees() {
@@ -150,7 +223,25 @@ public class RegistrationPanel extends JPanel {
         }
     }
 
-    // Same RoundedButtonUI class from LoginPanel for consistent button style
+    // DocumentFilter for letters only
+    static class LettersOnlyFilter extends DocumentFilter {
+        @Override
+        public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr)
+                throws BadLocationException {
+            if (string.matches("[a-zA-Z]+")) {
+                super.insertString(fb, offset, string, attr);
+            }
+        }
+
+        @Override
+        public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
+                throws BadLocationException {
+            if (text.matches("[a-zA-Z]+")) {
+                super.replace(fb, offset, length, text, attrs);
+            }
+        }
+    }
+
     private static JButton createRoundedButton(String text, Color bgColor, Color fgColor) {
         JButton button = new JButton(text);
         button.setFocusPainted(false);
@@ -197,14 +288,17 @@ public class RegistrationPanel extends JPanel {
             }
 
             g2.fillRoundRect(0, 0, b.getWidth(), b.getHeight(), 20, 20);
-            g2.setColor(foreground);
 
-            FontMetrics fm = g2.getFontMetrics();
-            Rectangle r = b.getBounds();
+            // Draw the button text
             String text = b.getText();
-            int x = (r.width - fm.stringWidth(text)) / 2;
-            int y = (r.height + fm.getAscent()) / 2 - 2;
-            g2.drawString(text, x, y);
+            if (text != null && !text.isEmpty()) {
+                g2.setColor(foreground);
+                FontMetrics fm = g2.getFontMetrics();
+                Rectangle r = b.getBounds();
+                int x = (r.width - fm.stringWidth(text)) / 2;
+                int y = (r.height + fm.getAscent()) / 2 - 2;
+                g2.drawString(text, x, y);
+            }
 
             g2.dispose();
         }

@@ -4,6 +4,7 @@ import java.awt.*;
 import java.net.URL;
 import javax.swing.*;
 import javax.swing.text.*;
+import Dashboard.Dashboard;
 
 public class LoginPanel extends JPanel {
     private JTextField userID;
@@ -74,6 +75,7 @@ public class LoginPanel extends JPanel {
         gbc.gridx = 1;
         password = new JPasswordField(20);
         add(password, gbc);
+        password.addActionListener(e -> onLogin());
 
         // Message Label (support multiline with HTML)
         gbc.gridy = 4;
@@ -113,7 +115,6 @@ public class LoginPanel extends JPanel {
         button.setFont(new Font("SansSerif", Font.BOLD, 14));
         button.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        // Rounded corners using a custom border or look & feel
         button.setUI(new RoundedButtonUI(bgColor, fgColor));
         return button;
     }
@@ -127,31 +128,39 @@ public class LoginPanel extends JPanel {
     }
 
     private void onLogin() {
-    String userId = userID.getText().trim();
-    String pass = new String(password.getPassword()).trim();
+        String userId = userID.getText().trim();
+        String pass = new String(password.getPassword()).trim();
 
-    if (userId.isEmpty() && pass.isEmpty()) {
-        showMessage("<html><center>Please enter your <b>Account ID</b> and <b>Password</b>.</center></html>", Color.RED);
-    } else if (userId.isEmpty()) {
-        showMessage("Please enter your Account ID.", Color.RED);
-    } else if (pass.isEmpty()) {
-        showMessage("Please enter your Password.", Color.RED);
-    } else {
-        showMessage("Login successful! Redirecting...", new Color(0, 255, 0));
-
-        // Delay to show success message, then switch to Dashboard
-        Timer timer = new Timer(1500, evt -> {
-            // Open Dashboard
-            new Dashboard.Dashboard().setVisible(true);
-
-            // Close the login window
-            SwingUtilities.getWindowAncestor(LoginPanel.this).dispose();
-        });
-        timer.setRepeats(false);
-        timer.start();
+        if (userId.isEmpty() && pass.isEmpty()) {
+            showMessage("<html><center>Please enter your <b>Account ID</b> and <b>Password</b>.</center></html>", Color.RED);
+        } else if (userId.isEmpty()) {
+            showMessage("Please enter your Account ID.", Color.RED);
+        } else if (pass.isEmpty()) {
+            showMessage("Please enter your Password.", Color.RED);
+        } else {
+            // Use your authentication logic
+            String result = Authentication.authenticationLogic.authenticate(userId, pass);
+            if (result.equals("Faculty") || result.equals("Student")) {
+                showMessage("Login successful! Redirecting...", new Color(0, 255, 0));
+                Timer timer = new Timer(1000, evt -> {
+                    // Open Dashboard
+                    new Dashboard();
+                    // Close the main frame
+                    SwingUtilities.getWindowAncestor(this).dispose();
+                });
+                timer.setRepeats(false);
+                timer.start();
+            } else {
+                showMessage("Invalid ID number or password. Please try again.", Color.RED);
+                clearFields(); // Clear fields on failed login
+            }
+        }
     }
-}
 
+    private void clearFields() {
+        userID.setText("");
+        password.setText("");
+    }
 
     private void onSwitchToRegister() {
         parentLayout.show(parentPanel, "Register");

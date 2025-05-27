@@ -3,6 +3,9 @@ package DataSaving;
 import java.io.File;
 import java.io.IOException;
 import java.io.FileWriter;
+import java.io.BufferedReader;
+import java.io.FileReader;
+
 
 import StudentTeacher.Student;
 import StudentTeacher.Teacher;
@@ -181,4 +184,26 @@ public class FileHandle {
             e.printStackTrace();
         }
     }
+
+    public static String getPasswordHash(String userID) throws IOException {
+        // Check both student and teacher files
+        File[] files = {new File("newStudent.txt"), new File("newTeacher.txt")};
+
+        for (File file : files) {
+            if (!file.exists()) continue;
+
+            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    String[] tokens = line.split(",");
+                    if (tokens.length >= 4 && tokens[2].equals(userID)) {
+                        return tokens[3]; // This is the hashed password
+                    }
+                }
+            }
+        }
+        
+        return null;
+    }
 }
+
