@@ -5,6 +5,14 @@ import java.io.IOException;
 import java.io.FileWriter;
 import java.time.LocalDate;
 
+import javax.security.auth.Subject;
+
+import StudentTeacher.Student;
+import StudentTeacher.Teacher;
+import Course.Course;
+//import Assignment.Assignment;
+
+
 public class FileHandle {
 
     // Create a file for student and teacher
@@ -27,7 +35,7 @@ public class FileHandle {
         }
     }
 
-    public void saveStudent(StudentInfo student) throws IOException {
+    public void saveStudent(Student student) throws IOException {
         try {
             FileWriter writer = new FileWriter("newStudent.txt", true);
             writer.write(student.toFileString() + "\n");
@@ -38,7 +46,7 @@ public class FileHandle {
         }
     }
 
-    public void saveTeacherwithSubject(TeacherInfo teacher, SubjectInfo subject) throws IOException {
+    public void saveTeacherwithSubject(Teacher teacher, Course subject) throws IOException {
         try {
             FileWriter writer = new FileWriter("newTeacher.txt", true);
             writer.write(teacher.toFileString() + ", Subject: " + subject.getCourseId() + " - " + subject.getCourseName() + "\n");
@@ -51,10 +59,10 @@ public class FileHandle {
 
     public void StudentInput() {
         try {
-            saveStudent(new StudentInfo("John", "Doe", "T001", "password123", "BSIT", 2));
-            saveStudent(new StudentInfo("Jane", "Smith", "T002", "password456", "BSCS", 3));
-            saveStudent(new StudentInfo("Alice", "Johnson", "T003", "password789", "BSED", 1));
-            saveStudent(new StudentInfo("Bob", "Brown", "T004", "password101", "BSA", 4));
+            saveStudent(new Student(null, null, null, null, null, 0)); 
+            // saveStudent(new StudentInfo("Jane", "Smith", "T002", "password456", "BSCS", 3));
+            // saveStudent(new StudentInfo("Alice", "Johnson", "T003", "password789", "BSED", 1));
+            // saveStudent(new StudentInfo("Bob", "Brown", "T004", "password101", "BSA", 4));
         } catch (IOException e) {
             System.out.println("An error has occurred.");
             e.printStackTrace();
@@ -63,15 +71,15 @@ public class FileHandle {
 
     public void teacherInput() {
         try {
-            TeacherInfo teacher1 = new TeacherInfo("John", "Doe", "adm01", "password123");
-            TeacherInfo teacher2 = new TeacherInfo("Jane", "Smith", "adm02", "password456");
-            TeacherInfo teacher3 = new TeacherInfo("Alice", "Johnson", "adm03", "password789");
+            Teacher teacher1 = new Teacher("John", "Doe", "adm01", "password123");
+            Teacher teacher2 = new Teacher("Jane", "Smith", "adm02", "password456");
+            Teacher teacher3 = new Teacher("Alice", "Johnson", "adm03", "password789");
 
-            SubjectInfo subject1 = new SubjectInfo("SCS101", "Programming 1", teacher1, teacher2);
-            SubjectInfo subject2 = new SubjectInfo("SCS102", "Web Development", teacher2, teacher3);
-            SubjectInfo subject3 = new SubjectInfo("SCS103", "Digital Visual Arts", teacher1, teacher3);
-            SubjectInfo subject4 = new SubjectInfo("SCS104", "Introduction to Cyber Security", teacher3);
-            SubjectInfo subject5 = new SubjectInfo("SCS105", "Data Structures and Algorithms", teacher1, teacher2);
+            Course subject1 = new Course("SCS101", "Programming 1", teacher1, teacher2);
+            Course subject2 = new Course("SCS102", "Web Development", teacher2, teacher3);
+            Course subject3 = new Course("SCS103", "Digital Visual Arts", teacher1, teacher3);
+            Course subject4 = new Course("SCS104", "Introduction to Cyber Security", teacher3);
+            Course subject5 = new Course("SCS105", "Data Structures and Algorithms", teacher1, teacher2);
 
             FileWriter writer = new FileWriter("newTeacher.txt", true);
             writer.write(subject1.toFileString() + "\n");
@@ -85,8 +93,8 @@ public class FileHandle {
             e.printStackTrace();
         }
     }
-
-    public void saveSubmission(AssignmentInfo assignment, StudentInfo student, SubjectInfo subject) throws IOException {
+    //change assignmentInfo
+    public void saveSubmission(AssignmentInfo assignment, Student student, Course subject) throws IOException {
         try {
             FileWriter studentWriter = new FileWriter("newStudent.txt", true);
             studentWriter.write("Assignment Submitted: " + assignment.toFileString() + "\n"
@@ -106,12 +114,12 @@ public class FileHandle {
             e.printStackTrace();
         }
     }
-
+    //assignmentInfo
     public void submissionInput() {
         try {
-            StudentInfo student = new StudentInfo("Ella", "Reyes", "S002", "pass456", "BSCS", 3);
-            TeacherInfo teacher = new TeacherInfo("John", "Doe", "T001", "password123");
-            SubjectInfo subject = new SubjectInfo("CS102", "Computer Science 102", teacher);
+            Student student = new Student("Ella", "Reyes", "S002", "pass456", "BSCS", 3);
+            Teacher teacher = new Teacher("John", "Doe", "T001", "password123");
+            Course subject = new Course("CS102", "Computer Science 102", teacher);
             AssignmentInfo assignment = new AssignmentInfo("Project 1", "Create a class system", LocalDate.of(2025, 12, 31));
 
             if (assignment.getTitle() == null || assignment.getDescription() == null || assignment.getDueDate() == null) {
@@ -125,8 +133,8 @@ public class FileHandle {
             e.printStackTrace();
         }
     }
-
-    public void saveGrade(float grade, StudentInfo student, TeacherInfo teacher, SubjectInfo subject, AssignmentInfo assignment) throws IOException {
+    //assignmentinfo
+    public void saveGrade(float grade, Student student, Teacher teacher, Course subject, AssignmentInfo assignment) throws IOException {
         try {
             FileWriter teacherWriter = new FileWriter("newTeacher.txt", true);
             teacherWriter.write("Graded Assignment:\n");
@@ -146,12 +154,12 @@ public class FileHandle {
             e.printStackTrace();
         }
     }
-
+    //assignmentinfo
     public void gradeInput() {
         try {
-            StudentInfo student = new StudentInfo("Ella", "Reyes", "S002", "pass456", "BSCS", 3);
-            TeacherInfo teacher = new TeacherInfo("John", "Doe", "T001", "password123");
-            SubjectInfo subject = new SubjectInfo("CS102", "Computer Science 102", teacher);
+            Student student = new Student("Ella", "Reyes", "S002", "pass456", "BSCS", 3);
+            Teacher teacher = new Teacher("John", "Doe", "T001", "password123");
+            Course subject = new Course("CS102", "Computer Science 102", teacher);
             AssignmentInfo assignment = new AssignmentInfo("Project 1", "Create a class system", LocalDate.of(2025, 12, 31));
             float grade = 93.5f;
 
@@ -161,7 +169,8 @@ public class FileHandle {
             e.printStackTrace();
         }
     }
-    public void savePostedAssignment(TeacherInfo teacher, SubjectInfo subject, AssignmentInfo assignment) throws IOException {
+    //assignmentInfo
+    public void savePostedAssignment(Teacher teacher, Course subject, AssignmentInfo assignment) throws IOException {
         try {
             FileWriter writer = new FileWriter("newTeacher.txt", true); // append mode
 
@@ -178,11 +187,11 @@ public class FileHandle {
             e.printStackTrace();
         }
     }
-
+    //assignmentInfo
     public void postAssignmentInput() {
         try {
-            TeacherInfo teacher = new TeacherInfo("John", "Doe", "T001", "password123");
-            SubjectInfo subject = new SubjectInfo("CS101", "Introduction to Computer Science", teacher);
+            Teacher teacher = new Teacher("John", "Doe", "T001", "password123");
+            Course subject = new Course("CS101", "Introduction to Computer Science", teacher);
             AssignmentInfo assignment = new AssignmentInfo("Midterm Project", "Build a simple LMS", LocalDate.of(2025, 11, 15));
 
             // Save the posted assignment
