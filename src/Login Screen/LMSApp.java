@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.CardLayout;
 
 public class LMSApp {
     private JFrame frame;
