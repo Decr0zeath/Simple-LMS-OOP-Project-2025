@@ -1,13 +1,15 @@
+package AssignmentFiles;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public class Assignment {
+public class AssignmentInfo {
 	private String title;
 	private String description;
 	private LocalDate dueDate;
 
 	// Constructor for the Assignment class with validation
-	public Assignment(String title, String description, LocalDate dueDate) {
+	public AssignmentInfo(String title, String description, LocalDate dueDate) {
 		// Validates the title and description
 		// Throws IllegalArgumentException if any argument is invalid
 		if (title == null || title.trim().isEmpty()) {
