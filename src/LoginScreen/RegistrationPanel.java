@@ -5,7 +5,7 @@ import javax.swing.*;
 import javax.swing.text.*;
 import Authentication.authenticationLogic;
 import DataSaving.FileHandle;
-import StudentTeacher.Student; 
+import StudentTeacher.Student;
 
 public class RegistrationPanel extends JPanel {
 
@@ -51,8 +51,8 @@ public class RegistrationPanel extends JPanel {
 
         // Input fields labels
         String[] labels = {
-            "First Name:", "Last Name:", "Account ID:", "Password:",
-            "Retype Password:", "Degree Program:", "Year Level:"
+                "First Name:", "Last Name:", "Account ID:", "Password:",
+                "Retype Password:", "Degree Program:", "Year Level:"
         };
 
         firstNameField = new JTextField(20);
@@ -64,11 +64,11 @@ public class RegistrationPanel extends JPanel {
         passwordField = new JPasswordField(20);
         retypePasswordField = new JPasswordField(20);
         degreeComboBox = new JComboBox<>(getDegrees());
-        yearComboBox = new JComboBox<>(new String[]{"Select Year", "1", "2", "3", "4"});
+        yearComboBox = new JComboBox<>(new String[] { "Select Year", "1", "2", "3", "4" });
 
         Component[] inputs = {
-            firstNameField, lastNameField, accountIdField,
-            passwordField, retypePasswordField, degreeComboBox, yearComboBox
+                firstNameField, lastNameField, accountIdField,
+                passwordField, retypePasswordField, degreeComboBox, yearComboBox
         };
 
         for (int i = 0; i < labels.length; i++) {
@@ -125,26 +125,26 @@ public class RegistrationPanel extends JPanel {
 
         // Validation
         if (firstName.isEmpty() || lastName.isEmpty() || studentId.isEmpty() ||
-            password.isEmpty() || retypePassword.isEmpty() ||
-            degree.equals("Select Degree") || yearLevel.equals("Select Year")) {
+                password.isEmpty() || retypePassword.isEmpty() ||
+                degree.equals("Select Degree") || yearLevel.equals("Select Year")) {
             JOptionPane.showMessageDialog(this, "Please complete all fields.",
-                "Validation Error", JOptionPane.ERROR_MESSAGE);
+                    "Validation Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         // Check if passwords match
         if (!password.equals(retypePassword)) {
             JOptionPane.showMessageDialog(this, "Passwords do not match.",
-                "Validation Error", JOptionPane.ERROR_MESSAGE);
+                    "Validation Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         // Validate student ID format (must be 10 digits)
         if (!studentId.matches("\\d{10}")) {
             JOptionPane.showMessageDialog(this,
-                "Student ID must be 10 digits long.",
-                "Validation Error",
-                JOptionPane.ERROR_MESSAGE);
+                    "Student ID must be 10 digits long.",
+                    "Validation Error",
+                    JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -154,22 +154,21 @@ public class RegistrationPanel extends JPanel {
 
             // Create new Student object (not StudentInfo)
             Student newStudent = new Student(
-                firstName,
-                lastName,
-                studentId,
-                hashedPassword,
-                degree,
-                Integer.parseInt(yearLevel)
-            );
+                    firstName,
+                    lastName,
+                    studentId,
+                    hashedPassword,
+                    degree,
+                    Integer.parseInt(yearLevel));
 
             // Save student using FileHandle
             FileHandle.fileCreate();
             fileHandle.saveStudent(newStudent);
 
             JOptionPane.showMessageDialog(this,
-                "Registration successful! Please login with your credentials.",
-                "Success",
-                JOptionPane.INFORMATION_MESSAGE);
+                    "Registration successful! Please login with your credentials.",
+                    "Success",
+                    JOptionPane.INFORMATION_MESSAGE);
 
             // Clear fields and return to login
             clearFields();
@@ -177,9 +176,9 @@ public class RegistrationPanel extends JPanel {
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this,
-                "An error occurred during registration: " + e.getMessage(),
-                "Error",
-                JOptionPane.ERROR_MESSAGE);
+                    "An error occurred during registration: " + e.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -195,12 +194,12 @@ public class RegistrationPanel extends JPanel {
     }
 
     private String[] getDegrees() {
-        return new String[]{
-            "Select Degree",
-            "BS in Computer Science",
-            "BS in Entertainment & Multimedia Computing",
-            "BS in Information Technology",
-            "BS in Information Systems"
+        return new String[] {
+                "Select Degree",
+                "BS in Computer Science",
+                "BS in Entertainment & Multimedia Computing",
+                "BS in Information Technology",
+                "BS in Information Systems"
         };
     }
 
@@ -223,12 +222,12 @@ public class RegistrationPanel extends JPanel {
         }
     }
 
-    // DocumentFilter for letters only
+    // DocumentFilter for letters and spaces only
     static class LettersOnlyFilter extends DocumentFilter {
         @Override
         public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr)
                 throws BadLocationException {
-            if (string.matches("[a-zA-Z]+")) {
+            if (string.matches("[a-zA-Z ]+")) {
                 super.insertString(fb, offset, string, attr);
             }
         }
@@ -236,7 +235,7 @@ public class RegistrationPanel extends JPanel {
         @Override
         public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
                 throws BadLocationException {
-            if (text.matches("[a-zA-Z]+")) {
+            if (text.matches("[a-zA-Z ]+")) {
                 super.replace(fb, offset, length, text, attrs);
             }
         }
