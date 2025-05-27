@@ -250,4 +250,9 @@ public class Dashboard {
         Image img = icon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
         return new ImageIcon(img);
     }
+
+    public void setVisible(boolean b) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setVisible'");
+    }
 }
