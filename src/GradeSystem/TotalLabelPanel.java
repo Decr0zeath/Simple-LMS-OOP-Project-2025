@@ -1,4 +1,4 @@
-package GradeSystem;
+package GradeSystem;    
 
 import java.awt.*;
 import javax.swing.*;
