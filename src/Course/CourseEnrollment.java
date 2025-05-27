@@ -9,95 +9,8 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.color.*;
 
-
-class Course {
-    private String courseId;
-    private String courseName;
-    private int capacity;
-    private int enrolledCount;
-    private String schedule;
-
-    public Course(String courseId, String courseName, int capacity, String schedule) {
-        this.courseId = courseId;
-        this.courseName = courseName;
-        this.capacity = capacity;
-        this.enrolledCount = 0;
-        this.schedule = schedule;
-    }
-
-    public String getCourseId() {
-        return courseId;
-    }
-
-    public String getCourseName() {
-        return courseName;
-    }
-
-    public int getCapacity() {
-        return capacity;
-    }
-
-    public int getEnrolledCount() {
-        return enrolledCount;
-    }
-
-    public String getSchedule() {
-        return schedule;
-    }
-
-    public boolean canEnroll() {
-        return enrolledCount < capacity;
-    }
-
-    public void incrementEnrolledCount() {
-        if (canEnroll()) {
-            enrolledCount++;
-        }
-    }
-
-    public void decrementEnrolledCount() {
-        if (enrolledCount > 0) {
-            enrolledCount--;
-        }
-    }
-
-    @Override
-    public String toString() {
-        return courseId + " - " + courseName + " (" + enrolledCount + "/" + capacity + ") - " + schedule;
-    }
-}
-
-class Student {
-    private int accountId;
-    private String name;
-    private List<Course> enrolledCourses;
-
-    public Student(int accountId, String name) {
-        this.accountId = accountId;
-        this.name = name;
-        this.enrolledCourses = new ArrayList<>();
-    }
-
-    public int getAccountId() {
-        return accountId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public List<Course> getEnrolledCourses() {
-        return enrolledCourses;
-    }
-
-    public void enroll(Course course) {
-        enrolledCourses.add(course);
-    }
-
-    public void unenroll(Course course) {
-        enrolledCourses.remove(course);
-    }
-}
+import Course.Course;
+import StudentTeacher.Student;
 
 interface CourseRepository {
     List<Course> getAllCourses();
@@ -351,8 +264,8 @@ class EnrollmentGUI extends JFrame implements ActionListener {
  
 
 // Main Class
-public class courseEnrollment {
-    public static void main(String[] args) {
+public class CourseEnrollment {
+    public static void CourseEnroll() {
         // Assume student login is already done and we have the current student object for testing
         Student loggedInStudent = new Student(01, "Sample");
 

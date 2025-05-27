@@ -165,11 +165,11 @@ class CourseWindowController {
 
         view.addButton.addActionListener(e -> {
         //  Collect Data
-        String title = view.assignmentTitleField.getText().trim();
-        String description = view.descriptionArea.getText().trim();
-        String year = (String) view.yearCombo.getSelectedItem();
-        String month = (String) view.monthCombo.getSelectedItem();
-        String day = (String) view.dayCombo.getSelectedItem();
+        //String title = view.assignmentTitleField.getText().trim();
+       // String description = view.descriptionArea.getText().trim();
+       // String year = (String) view.yearCombo.getSelectedItem();
+       // String month = (String) view.monthCombo.getSelectedItem();
+        //String day = (String) view.dayCombo.getSelectedItem();
         String totalMarks = view.totalMarksField.getText().trim();
 
         if (totalMarks.isEmpty()){
@@ -177,14 +177,14 @@ class CourseWindowController {
             return;
         }
 
-        int monthNum = Integer.parseInt(month.substring(0, 2));
-        int dayNum = Integer.parseInt(day);
+        //int monthNum = Integer.parseInt(month.substring(0, 2));
+        //int dayNum = Integer.parseInt(day);
 
-        java.time.LocalDate dueDate = java.time.LocalDate.of(Integer.parseInt(year), monthNum, dayNum);
+        //java.time.LocalDate dueDate = java.time.LocalDate.of(Integer.parseInt(year), monthNum, dayNum);
 
         try {
             // Validate and create Assignment object
-            Assignment assignment = new Assignment(title, description, dueDate);
+           // Assignment assignment = new Assignment(title, description, dueDate);
 
             view.frame.dispose();
             onAddAssignment.run(); 
@@ -195,34 +195,18 @@ class CourseWindowController {
     }
 }
 
-// --- GUIDemo:
-/*class GUIDemo {
-    JFrame frame;
-
-    public GUIDemo() {
-        frame = new JFrame("GUIDemo Window");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(600, 400);
-        frame.setLocationRelativeTo(null);
-        JLabel label = new JLabel("Welcome to GUIDemo!", SwingConstants.CENTER);
-        label.setFont(new Font("Segoe UI", Font.BOLD, 28));
-        frame.add(label);
-        frame.setVisible(true);
-    }
-}*/
-
 //  Main class
-public class AssignmentManagementGUI {
-    public static void main(String[] args){
-        try {
-            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+// public class AssignmentManagementGUI {
+//     public static void main(String[] args){
+//         try {
+//             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+//         } catch (Exception e) {
+//             e.printStackTrace();
+//         }
 
-        CourseWindowView view = new CourseWindowView();
-        new CourseWindowController(view, () -> new AssignmentSubmissionForm());
-        // CHANGED: This will now open AssignmentSubmissionForm
-        view.show();
-    }
-}
+//         CourseWindowView view = new CourseWindowView();
+//         new CourseWindowController(view, () -> new AssignmentSubmissionForm());
+//         // CHANGED: This will now open AssignmentSubmissionForm
+//         view.show();
+//     }
+// }
