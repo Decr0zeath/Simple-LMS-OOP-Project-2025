@@ -2,81 +2,51 @@ package LoginScreen;
 
 import DataSaving.FileHandle;
 import StudentTeacher.Student;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class LMSApp {
-    private static final String STUDENT_FILE = "newstudent.txt";
 
-    
-    public static void initializeFiles() {
-        try {
-            File file = new File(STUDENT_FILE);
-            if (file.createNewFile()) {
-                System.out.println("File created: " + STUDENT_FILE);
+    // Hash the password using SHA-256 and return hex string
+    public static String hashPassword(String password) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        byte[] hashBytes = md.digest(password.getBytes());
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : hashBytes) {
+            String hex = Integer.toHexString(0xff & b);
+            if (hex.length() == 1) hexString.append('0');
+            hexString.append(hex);
+        }
+        return hexString.toString();
+    }
+
+    // Authenticate user by checking if the ID and hashed password matches stored record
+    public static String authenticate(String userId, String password) {
+        try (BufferedReader br = new BufferedReader(new FileReader("newStudent.txt"))) {
+            String line;
+            String enteredHash = hashPassword(password);
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length >= 4) {
+                    String storedId = parts[2].trim();
+                    String storedHash = parts[3].trim();
+                    if (storedId.equals(userId) && storedHash.equals(enteredHash)) {
+                        return "Valid";
+                    }
+                }
             }
-        } catch (IOException e) {
+        } catch (IOException | NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-    }
-
-    
-    public static void saveStudent(Student student) throws IOException {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(STUDENT_FILE, true))) {
-            writer.write(student.toFileString());
-            writer.newLine();
-        }
-    }
-
-    // Hash password using SHA-512 
-    public static String hashPassword(String password) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-512");
-            byte[] hashBytes = md.digest(password.getBytes());
-            StringBuilder sb = new StringBuilder();
-            for (byte b : hashBytes) {
-                sb.append(String.format("%02x", b));
-            }
-            return sb.toString();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("Hashing algorithm not found.");
-        }
-    }
-
-    // Get stored hashed password for a given user ID (via FileHandle)
-    public static String getStoredPasswordHash(String userID) {
-        try {
-            FileHandle fileHandle = new FileHandle();
-            return fileHandle.getPasswordHash(userID);
-        } catch (IOException e) {
-            System.err.println("Error reading user data: " + e.getMessage());
-            return null;
-        }
-    }
-
-    // Determine role based on userID length (same as authenticationLogic)
-    public static String determineRole(String userID) {
-        if (!userID.matches("\\d+")) return "Invalid";
-        int length = userID.length();
-        if (length == 5) return "Faculty";
-        if (length == 10) return "Student";
         return "Invalid";
     }
 
-    // Authenticate user credentials; return role or "Invalid"
-    public static String authenticate(String enteredID, String enteredPassword) {
-        String role = determineRole(enteredID);
-        if (role.equals("Invalid")) return "Invalid";
-
-        String storedHash = getStoredPasswordHash(enteredID);
-        if (storedHash == null) return "Invalid";
-
-        String enteredHash = hashPassword(enteredPassword);
-        if (enteredHash.equals(storedHash)) {
-            return role;
-        } else {
-            return "Invalid";
-        }
+    // Save a student with hashed password (used during registration)
+    public static void saveStudentWithHashedPassword(Student student) {
+        FileHandle fileHandle = new FileHandle();
+        fileHandle.saveStudentWithHashedPassword(student);
     }
 }

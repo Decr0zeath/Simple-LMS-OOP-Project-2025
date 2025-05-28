@@ -1,17 +1,19 @@
 package LoginScreen;
 
-import LoginScreen.LoginPanel.RoundedButtonUI;
 import StudentTeacher.Student;
 import java.awt.*;
-import java.net.URL;
 import javax.swing.*;
-import javax.swing.text.*;
 
 public class RegistrationPanel extends JPanel {
-    private JTextField userID;
-    private JPasswordField password;
-    private JPasswordField confirmPassword;
+    private JTextField firstNameField;
+    private JTextField lastNameField;
+    private JTextField accountIDField;
+    private JPasswordField passwordField;
+    private JTextField degreeField;
+    private JTextField yearField;
+
     private JLabel messageLabel;
+
     private CardLayout parentLayout;
     private JPanel parentPanel;
 
@@ -22,74 +24,95 @@ public class RegistrationPanel extends JPanel {
     }
 
     private void initComponents() {
-        Color darkGreen = new Color(69, 136, 70);
-        setBackground(darkGreen);
+        setBackground(new Color(69, 136, 70));
         setBorder(BorderFactory.createEmptyBorder(40, 80, 40, 80));
         setLayout(new GridBagLayout());
-
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(12, 12, 12, 12);
+
+        gbc.insets = new Insets(8, 8, 8, 8);
         gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.WEST;
 
-        // Logo
-        ImageIcon originalIcon = loadImage("lms-logo.png");
-        if (originalIcon != null) {
-            Image scaledImage = originalIcon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
-            JLabel logoLabel = new JLabel(new ImageIcon(scaledImage));
-            gbc.gridx = 0;
-            gbc.gridy = 0;
-            gbc.gridwidth = 2;
-            gbc.anchor = GridBagConstraints.CENTER;
-            add(logoLabel, gbc);
-        }
-
-        // Title
-        gbc.gridy = 1;
-        JLabel title = new JLabel("Register Account", SwingConstants.CENTER);
-        title.setFont(new Font("SansSerif", Font.BOLD, 28));
-        title.setForeground(Color.WHITE);
-        add(title, gbc);
+        JLabel titleLabel = new JLabel("Create New Account");
+        titleLabel.setFont(new Font("SansSerif", Font.BOLD, 28));
+        titleLabel.setForeground(Color.WHITE);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        add(titleLabel, gbc);
 
         gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.WEST;
 
-        // Account ID
-        gbc.gridy = 2;
+        // First Name
+        gbc.gridy++;
         gbc.gridx = 0;
-        JLabel idLabel = new JLabel("Account ID:");
-        idLabel.setForeground(Color.WHITE);
-        add(idLabel, gbc);
+        JLabel firstNameLabel = new JLabel("First Name:");
+        firstNameLabel.setForeground(Color.WHITE);
+        add(firstNameLabel, gbc);
 
         gbc.gridx = 1;
-        userID = new JTextField(20);
-        ((AbstractDocument) userID.getDocument()).setDocumentFilter(new NumericFilter());
-        add(userID, gbc);
+        firstNameField = new JTextField(20);
+        add(firstNameField, gbc);
+
+        // Last Name
+        gbc.gridy++;
+        gbc.gridx = 0;
+        JLabel lastNameLabel = new JLabel("Last Name:");
+        lastNameLabel.setForeground(Color.WHITE);
+        add(lastNameLabel, gbc);
+
+        gbc.gridx = 1;
+        lastNameField = new JTextField(20);
+        add(lastNameField, gbc);
+
+        // Account ID
+        gbc.gridy++;
+        gbc.gridx = 0;
+        JLabel accountIDLabel = new JLabel("Account ID:");
+        accountIDLabel.setForeground(Color.WHITE);
+        add(accountIDLabel, gbc);
+
+        gbc.gridx = 1;
+        accountIDField = new JTextField(20);
+        add(accountIDField, gbc);
 
         // Password
-        gbc.gridy = 3;
+        gbc.gridy++;
         gbc.gridx = 0;
         JLabel passwordLabel = new JLabel("Password:");
         passwordLabel.setForeground(Color.WHITE);
         add(passwordLabel, gbc);
 
         gbc.gridx = 1;
-        password = new JPasswordField(20);
-        add(password, gbc);
+        passwordField = new JPasswordField(20);
+        add(passwordField, gbc);
 
-        // Confirm Password
-        gbc.gridy = 4;
+        // Degree
+        gbc.gridy++;
         gbc.gridx = 0;
-        JLabel confirmPasswordLabel = new JLabel("Confirm Password:");
-        confirmPasswordLabel.setForeground(Color.WHITE);
-        add(confirmPasswordLabel, gbc);
+        JLabel degreeLabel = new JLabel("Degree:");
+        degreeLabel.setForeground(Color.WHITE);
+        add(degreeLabel, gbc);
 
         gbc.gridx = 1;
-        confirmPassword = new JPasswordField(20);
-        add(confirmPassword, gbc);
-        confirmPassword.addActionListener(e -> onRegister());
+        degreeField = new JTextField(20);
+        add(degreeField, gbc);
+
+        // Year
+        gbc.gridy++;
+        gbc.gridx = 0;
+        JLabel yearLabel = new JLabel("Year:");
+        yearLabel.setForeground(Color.WHITE);
+        add(yearLabel, gbc);
+
+        gbc.gridx = 1;
+        yearField = new JTextField(20);
+        add(yearField, gbc);
 
         // Message Label
-        gbc.gridy = 5;
+        gbc.gridy++;
         gbc.gridx = 0;
         gbc.gridwidth = 2;
         messageLabel = new JLabel(" ");
@@ -97,86 +120,53 @@ public class RegistrationPanel extends JPanel {
         messageLabel.setHorizontalAlignment(SwingConstants.CENTER);
         add(messageLabel, gbc);
 
-        // Buttons
-        gbc.gridy = 6;
-        gbc.gridx = 0;
+        // Buttons Panel
+        gbc.gridy++;
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
-        btnPanel.setBackground(darkGreen);
+        btnPanel.setBackground(new Color(69, 136, 70));
 
-        JButton registerButton = createRoundedButton("Register", new Color(0, 100, 0), Color.WHITE);
-        JButton backButton = createRoundedButton("Back to Login", new Color(0, 100, 0), Color.WHITE);
+        JButton registerBtn = new JButton("Register");
+        JButton backBtn = new JButton("Back to Login");
 
-        registerButton.setPreferredSize(new Dimension(140, 40));
-        backButton.setPreferredSize(new Dimension(140, 40));
+        registerBtn.setPreferredSize(new Dimension(140, 40));
+        backBtn.setPreferredSize(new Dimension(140, 40));
 
-        btnPanel.add(registerButton);
-        btnPanel.add(backButton);
+        btnPanel.add(registerBtn);
+        btnPanel.add(backBtn);
         add(btnPanel, gbc);
 
-        // Listeners
-        registerButton.addActionListener(e -> onRegister());
-        backButton.addActionListener(e -> onBackToLogin());
-    }
-
-    private JButton createRoundedButton(String text, Color bgColor, Color fgColor) {
-        JButton button = new JButton(text);
-        button.setFocusPainted(false);
-        button.setBackground(bgColor);
-        button.setForeground(fgColor);
-        button.setFont(new Font("SansSerif", Font.BOLD, 14));
-        button.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
-        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        button.setUI(new RoundedButtonUI(bgColor, fgColor));
-        return button;
-    }
-
-    private ImageIcon loadImage(String imageName) {
-        URL imageUrl = getClass().getClassLoader().getResource("resources/" + imageName);
-        return imageUrl != null ? new ImageIcon(imageUrl) : null;
+        registerBtn.addActionListener(e -> onRegister());
+        backBtn.addActionListener(e -> onBackToLogin());
     }
 
     private void onRegister() {
-        String id = userID.getText().trim();
-        String pass = new String(password.getPassword()).trim();
-        String confirmPass = new String(confirmPassword.getPassword()).trim();
+        String firstName = firstNameField.getText().trim();
+        String lastName = lastNameField.getText().trim();
+        String accountID = accountIDField.getText().trim();
+        String password = new String(passwordField.getPassword()).trim();
+        String degree = degreeField.getText().trim();
+        String yearStr = yearField.getText().trim();
 
-        if (id.isEmpty() || pass.isEmpty() || confirmPass.isEmpty()) {
-            showMessage("Please fill out all fields.", Color.RED);
+        if (firstName.isEmpty() || lastName.isEmpty() || accountID.isEmpty() || 
+            password.isEmpty() || degree.isEmpty() || yearStr.isEmpty()) {
+            showMessage("Please fill in all fields.", Color.RED);
             return;
         }
 
-        if (!pass.equals(confirmPass)) {
-            showMessage("Passwords do not match.", Color.RED);
-            return;
-        }
-
-        if (!id.matches("\\d+")) {
-            showMessage("Account ID must be numeric.", Color.RED);
-            return;
-        }
-
-        String role = LMSApp.determineRole(id);
-        if (role.equals("Invalid")) {
-            showMessage("Invalid Account ID length.", Color.RED);
-            return;
-        }
-
-        String hashedPassword = LMSApp.hashPassword(pass);
-        Student student = new Student(id, hashedPassword, "Unknown", id + "@student.lms", "Undeclared", 1);
-
-
+        int year;
         try {
-            LMSApp.saveStudent(student);
-            showMessage("Registration successful! Please login.", new Color(0, 255, 0));
-            clearFields();
-
-            Timer timer = new Timer(1500, e -> onBackToLogin());
-            timer.setRepeats(false);
-            timer.start();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            showMessage("Failed to save student data.", Color.RED);
+            year = Integer.parseInt(yearStr);
+        } catch (NumberFormatException e) {
+            showMessage("Year must be a number.", Color.RED);
+            return;
         }
+
+        Student newStudent = new Student(firstName, lastName, accountID, password, degree, year);
+
+        LMSApp.saveStudentWithHashedPassword(newStudent);
+
+        showMessage("Registration successful! Please login.", new Color(0, 128, 0));
+        clearFields();
     }
 
     private void onBackToLogin() {
@@ -185,33 +175,17 @@ public class RegistrationPanel extends JPanel {
         showMessage(" ", Color.RED);
     }
 
-    private void clearFields() {
-        userID.setText("");
-        password.setText("");
-        confirmPassword.setText("");
-    }
-
     private void showMessage(String message, Color color) {
         messageLabel.setText(message);
         messageLabel.setForeground(color);
     }
 
-    // DocumentFilter for numeric input only
-    static class NumericFilter extends DocumentFilter {
-        @Override
-        public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr)
-                throws BadLocationException {
-            if (string.matches("\\d+")) {
-                super.insertString(fb, offset, string, attr);
-            }
-        }
-
-        @Override
-        public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
-                throws BadLocationException {
-            if (text.matches("\\d+")) {
-                super.replace(fb, offset, length, text, attrs);
-            }
-        }
+    private void clearFields() {
+        firstNameField.setText("");
+        lastNameField.setText("");
+        accountIDField.setText("");
+        passwordField.setText("");
+        degreeField.setText("");
+        yearField.setText("");
     }
 }
