@@ -3,15 +3,15 @@ package DataSaving;
 import java.io.File;
 import java.io.IOException;
 import java.io.FileWriter;
-import java.io.BufferedReader;
-import java.io.FileReader;
+// import java.io.BufferedReader;
+// import java.io.FileReader;
 
 
 import StudentTeacher.Student;
 import StudentTeacher.Teacher;
 import Course.Course;
 import AssignmentFiles.AssignmentInfo;
-//import Authentication.AuthenticationLogic;
+import Authentication.AuthenticationLogic;
 
 
 
@@ -190,7 +190,7 @@ public class FileHandle {
     
     public void saveStudentWithHashedPassword(Student student) {
         try {
-            String hashedPassword = hashPassword.hashPassword(student.getPassword());
+            String hashedPassword = AuthenticationLogic.hashPassword(student.getPassword());
             
             String line = student.getFirstName() + "," +
                         student.getLastName() + "," +
@@ -213,7 +213,7 @@ public class FileHandle {
 
     public void saveTeacherWithHashedPassword(Teacher teacher) {
         try {
-            String hashedPassword = hashPassword.hashPassword(teacher.getPassword());
+            String hashedPassword = AuthenticationLogic.hashPassword(teacher.getPassword());
 
             String line = teacher.getFirstName() + "," +
                         teacher.getLastName() + "," +
