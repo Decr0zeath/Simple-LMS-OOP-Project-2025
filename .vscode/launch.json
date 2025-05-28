@@ -1,0 +1,56 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "AssignmentManagementGUI",
+            "request": "launch",
+            "mainClass": "AssignmentFiles.AssignmentManagementGUI",
+            "projectName": "Simple-LMS-OOP-Project-2025_6ea14f7f"
+        },
+        {
+            "type": "java",
+            "name": "AssignmentSubmissionForm",
+            "request": "launch",
+            "mainClass": "AssignmentFiles.AssignmentSubmissionForm",
+            "projectName": "Simple-LMS-OOP-Project-2025_6ea14f7f"
+        },
+        {
+            "type": "java",
+            "name": "AuthenticationLogic",
+            "request": "launch",
+            "mainClass": "Authentication.AuthenticationLogic",
+            "projectName": "Simple-LMS-OOP-Project-2025_6ea14f7f"
+        },
+        {
+            "type": "java",
+            "name": "CourseEnrollment",
+            "request": "launch",
+            "mainClass": "Course.CourseEnrollment",
+            "projectName": "Simple-LMS-OOP-Project-2025_6ea14f7f"
+        },
+        {
+            "type": "java",
+            "name": "Dashboard",
+            "request": "launch",
+            "mainClass": "Dashboard.Dashboard",
+            "projectName": "Simple-LMS-OOP-Project-2025_6ea14f7f"
+        },
+        {
+            "type": "java",
+            "name": "MainFrame",
+            "request": "launch",
+            "mainClass": "GradeAssign.MainFrame",
+            "projectName": "Simple-LMS-OOP-Project-2025_6ea14f7f"
+        }
+    ]
+}
