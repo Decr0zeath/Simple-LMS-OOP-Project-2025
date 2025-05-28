@@ -1,10 +1,10 @@
 package LoginScreen;
 
+import Dashboard.Dashboard;
 import java.awt.*;
 import java.net.URL;
 import javax.swing.*;
 import javax.swing.text.*;
-import Dashboard.Dashboard;
 
 public class LoginPanel extends JPanel {
     private JTextField userID;
@@ -28,22 +28,18 @@ public class LoginPanel extends JPanel {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(12, 12, 12, 12);
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        
-        // Load the logo image
-        ImageIcon originalIcon = loadImage("lms-logo.png");
-        if (originalIcon == null) {
-            System.out.println("Logo image not found.");
-            return;
-        }
-        Image scaledImage = originalIcon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
-        JLabel logoLabel = new JLabel(new ImageIcon(scaledImage));
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.CENTER;
-        add(logoLabel, gbc);
 
-        // Title
+        ImageIcon originalIcon = loadImage("lms-logo.png");
+        if (originalIcon != null) {
+            Image scaledImage = originalIcon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+            JLabel logoLabel = new JLabel(new ImageIcon(scaledImage));
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            gbc.gridwidth = 2;
+            gbc.anchor = GridBagConstraints.CENTER;
+            add(logoLabel, gbc);
+        }
+
         gbc.gridy = 1;
         JLabel title = new JLabel("Login to LMS", SwingConstants.CENTER);
         title.setFont(new Font("SansSerif", Font.BOLD, 28));
@@ -53,7 +49,6 @@ public class LoginPanel extends JPanel {
         gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.WEST;
 
-        // Account ID Label & Field
         gbc.gridy = 2;
         gbc.gridx = 0;
         JLabel idLabel = new JLabel("Account ID:");
@@ -65,7 +60,6 @@ public class LoginPanel extends JPanel {
         ((AbstractDocument) userID.getDocument()).setDocumentFilter(new NumericFilter());
         add(userID, gbc);
 
-        // Password Label & Field
         gbc.gridy = 3;
         gbc.gridx = 0;
         JLabel passwordLabel = new JLabel("Password:");
@@ -77,7 +71,6 @@ public class LoginPanel extends JPanel {
         add(password, gbc);
         password.addActionListener(e -> onLogin());
 
-        // Message Label (support multiline with HTML)
         gbc.gridy = 4;
         gbc.gridx = 0;
         gbc.gridwidth = 2;
@@ -86,7 +79,6 @@ public class LoginPanel extends JPanel {
         messageLabel.setHorizontalAlignment(SwingConstants.CENTER);
         add(messageLabel, gbc);
 
-        // Buttons Panel with improved UI
         gbc.gridy = 5;
         gbc.gridx = 0;
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
@@ -102,7 +94,6 @@ public class LoginPanel extends JPanel {
         btnPanel.add(registerButton);
         add(btnPanel, gbc);
 
-        // Button listeners
         loginButton.addActionListener(e -> onLogin());
         registerButton.addActionListener(e -> onSwitchToRegister());
     }
@@ -121,10 +112,7 @@ public class LoginPanel extends JPanel {
 
     private ImageIcon loadImage(String imageName) {
         URL imageUrl = getClass().getClassLoader().getResource("resources/" + imageName);
-        if (imageUrl != null) {
-            return new ImageIcon(imageUrl);
-        }
-        return null;
+        return imageUrl != null ? new ImageIcon(imageUrl) : null;
     }
 
     private void onLogin() {
@@ -133,28 +121,31 @@ public class LoginPanel extends JPanel {
 
         if (userId.isEmpty() && pass.isEmpty()) {
             showMessage("<html><center>Please enter your <b>Account ID</b> and <b>Password</b>.</center></html>", Color.RED);
-        } else if (userId.isEmpty()) {
-            showMessage("Please enter your Account ID.", Color.RED);
-        } else if (pass.isEmpty()) {
-            showMessage("Please enter your Password.", Color.RED);
-        } else {
-            // Use your authentication logic
-            String result = Authentication.authenticationLogic.authenticate(userId, pass);
-            if (result.equals("Faculty") || result.equals("Student")) {
-                showMessage("Login successful! Redirecting...", new Color(0, 255, 0));
-                Timer timer = new Timer(1000, evt -> {
-                    // Open Dashboard
-                    new Dashboard();
-                    // Close the main frame
-                    SwingUtilities.getWindowAncestor(this).dispose();
-                });
-                timer.setRepeats(false);
-                timer.start();
-            } else {
-                showMessage("Invalid ID number or password. Please try again.", Color.RED);
-                clearFields(); // Clear fields on failed login
-            }
+            return;
         }
+        if (userId.isEmpty()) {
+            showMessage("Please enter your Account ID.", Color.RED);
+            return;
+        }
+        if (pass.isEmpty()) {
+            showMessage("Please enter your Password.", Color.RED);
+            return;
+        }
+
+        String result = LMSApp.authenticate(userId, pass);
+
+        if (result.equals("Invalid")) {
+            showMessage("Invalid ID number or password. Please try again.", Color.RED);
+            return;
+        }
+
+        showMessage("Login successful! Redirecting...", new Color(0, 255, 0));
+        Timer timer = new Timer(1000, evt -> {
+            new Dashboard();
+            SwingUtilities.getWindowAncestor(this).dispose();
+        });
+        timer.setRepeats(false);
+        timer.start();
     }
 
     private void clearFields() {
@@ -164,6 +155,8 @@ public class LoginPanel extends JPanel {
 
     private void onSwitchToRegister() {
         parentLayout.show(parentPanel, "Register");
+        clearFields();
+        showMessage(" ", Color.RED);
     }
 
     private void showMessage(String message, Color color) {
@@ -171,7 +164,6 @@ public class LoginPanel extends JPanel {
         messageLabel.setForeground(color);
     }
 
-    // DocumentFilter for numeric input only
     static class NumericFilter extends DocumentFilter {
         @Override
         public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr)
@@ -190,12 +182,12 @@ public class LoginPanel extends JPanel {
         }
     }
 
-    // Inner class for rounded button UI
-    private static class RoundedButtonUI extends javax.swing.plaf.basic.BasicButtonUI {
+    // ✅ PUBLIC so other classes like RegistrationPanel can use it
+    public static class RoundedButtonUI extends javax.swing.plaf.basic.BasicButtonUI {
         private final Color background;
         private final Color foreground;
 
-        RoundedButtonUI(Color bg, Color fg) {
+        public RoundedButtonUI(Color bg, Color fg) {
             background = bg;
             foreground = fg;
         }
@@ -216,24 +208,18 @@ public class LoginPanel extends JPanel {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-            if (b.getModel().isPressed()) {
-                g2.setColor(background.darker());
-            } else if (b.getModel().isRollover()) {
-                g2.setColor(background.brighter());
-            } else {
-                g2.setColor(background);
-            }
+            g2.setColor(b.getModel().isPressed() ? background.darker() :
+                        b.getModel().isRollover() ? background.brighter() :
+                        background);
 
             g2.fillRoundRect(0, 0, b.getWidth(), b.getHeight(), 20, 20);
             g2.setColor(foreground);
 
             FontMetrics fm = g2.getFontMetrics();
-            Rectangle r = b.getBounds();
             String text = b.getText();
-            int x = (r.width - fm.stringWidth(text)) / 2;
-            int y = (r.height + fm.getAscent()) / 2 - 2;
+            int x = (b.getWidth() - fm.stringWidth(text)) / 2;
+            int y = (b.getHeight() + fm.getAscent()) / 2 - 2;
             g2.drawString(text, x, y);
-
             g2.dispose();
         }
     }

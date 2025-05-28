@@ -6,7 +6,7 @@ import DataSaving.FileHandle;
 import java.io.BufferedReader;
 import java.io.FileReader;
 
-public class authenticationLogic {
+public class AuthenticationLogic {
 
     public static String hashPassword(String password) {
         try {
