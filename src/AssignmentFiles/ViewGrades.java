@@ -1,13 +1,15 @@
 package AssignmentFiles;
 
+import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
+import GradeAssign.StudentGradeManager;
+
 
 public class ViewGrades {
 
-    public static void main(String[] args) {
+    public static void main(String[] args, StudentGradeManager gradeManager) {
         JFrame frame = new JFrame("Learning Management System");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(940, 550);
@@ -41,50 +43,43 @@ public class ViewGrades {
 
         table.getTableHeader().setReorderingAllowed(false);
 
-        JScrollPane scrollPane = new JScrollPane(table,
-                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-
         JPanel topPanel = new JPanel(new BorderLayout());
         Color greenColor = Color.decode("#458846");
         topPanel.setBackground(greenColor);
 
-        // Need for extension
-        String[] courseidStrings = {"All","Programming 1 - SCS101", "Web Development - SCS102", "Digital Visual Arts - SCS103", "Introduction to Cybersecurity - SCS104", "Data Structures and Algorithm - SCS105"};
-        JComboBox<String> courseDropdown = new JComboBox<>(courseidStrings);
-        courseDropdown.setFont(new Font("Raleway", Font.PLAIN, 16));
-        courseDropdown.setBackground(Color.WHITE);              // dropdown background white
-        courseDropdown.setForeground(Color.BLACK);              // text color black
-        courseDropdown.setOpaque(false);               // allow background color to show
-        courseDropdown.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5)); // internal padding
+        // Get all courses dynamically from gradeManager
+String[] allCourses = gradeManager.getAllStudents(); // course IDs (e.g., "SCS101", "SCS102", ...)
 
-        // Wrap dropdown in a transparent JPanel to preserve green background of parent panel
-        JPanel dropdownContainer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        dropdownContainer.setBackground(greenColor);  // match top panel background
-        dropdownContainer.add(courseDropdown);
+String[] courseDropdownItems = new String[allCourses.length + 1];
+courseDropdownItems[0] = "All"; // Add "All" at the top
+System.arraycopy(allCourses, 0, courseDropdownItems, 1, allCourses.length);
 
-        topPanel.add(dropdownContainer, BorderLayout.EAST);// Add dropdown to the right side of the top panel
-        JLabel title = new JLabel("Assignments");
-        title.setFont(new Font("Raleway", Font.BOLD, 20));
-        title.setOpaque(true);
-        title.setBackground(greenColor);
-        title.setForeground(Color.BLACK);
-        title.setBorder(BorderFactory.createEmptyBorder(5, 20, 10, 0));
-        topPanel.add(title, BorderLayout.WEST);
+JComboBox<String> courseDropdown = new JComboBox<>(courseDropdownItems);
+courseDropdown.setFont(new Font("Raleway", Font.PLAIN, 16));
+courseDropdown.setBackground(Color.WHITE);
+courseDropdown.setForeground(Color.BLACK);
+courseDropdown.setOpaque(false);
+courseDropdown.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        frame.add(topPanel, BorderLayout.NORTH);
-        frame.add(scrollPane, BorderLayout.CENTER);
+// Populate table based on course selection
+courseDropdown.addActionListener(e -> {
+    String selectedCourse = (String) courseDropdown.getSelectedItem();
+    model.setRowCount(0); // Clear previous rows
 
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-    }
-
-    public static void updateTable(DefaultTableModel model, Object[][] allData, String course) {
-        model.setRowCount(0); // Clear table
-        for (Object[] row : allData) {
-            if (row[0].equals(course)) {
-                model.addRow(new Object[]{row[1], row[2]});
+    for (String course : allCourses) {
+        if (selectedCourse.equals("All") || selectedCourse.equals(course)) {
+            Object[][] grades = gradeManager.getGrades(course);
+            if (grades != null) {
+                for (Object[] row : grades) {
+                    String title = row[0] != null ? row[0].toString() : "Untitled";
+                    String mark = row[1] != null ? row[1].toString() : "0";
+                    String total = row[2] != null ? row[2].toString() : "0";
+                    model.addRow(new Object[]{title, mark + " / " + total});
+                }
             }
         }
     }
+}
+
+);}
 }
