@@ -1,15 +1,17 @@
+package Course;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
-import java.awt.color.*;
 
-import Course.Course;
 import StudentTeacher.Student;
 
 interface CourseRepository {
@@ -40,46 +42,159 @@ class InMemoryCourseRepository implements CourseRepository {
     }
 }
 
-interface EnrollmentService {
-    boolean enrollStudentInCourse(Student student, String courseCode);
-    boolean unenrollStudentFromCourse(Student student, String courseCode);
-    List<Course> getEnrolledCourses(Student student);
-}
+   class EnrollmentManager {
+    private Map<Student, List<Course>> enrollmentMap = new HashMap<>();
+    private Map<String, Integer> enrollmentCounts = new HashMap<>(); // courseId -> count
 
-class StandardEnrollmentService implements EnrollmentService {
-    private CourseRepository courseRepository;
+    // New: Pending enrollments (courseId -> list of students)
+    private Map<String, List<Student>> pendingEnrollments = new HashMap<>();
 
-    public StandardEnrollmentService(CourseRepository courseRepository) {
-        this.courseRepository = courseRepository;
+    // Request enrollment (adds to pending)
+    public boolean requestEnrollment(Student student, Course course) {
+        pendingEnrollments.putIfAbsent(course.getCourseId(), new ArrayList<>());
+        List<Student> pending = pendingEnrollments.get(course.getCourseId());
+        if (!pending.contains(student)) {
+            pending.add(student);
+            return true;
+        }
+        return false; // already pending
     }
 
-    @Override
-    public boolean enrollStudentInCourse(Student student, String courseId) {
-        Course course = courseRepository.findCourseById(courseId);
-        if (course != null && course.canEnroll() && !student.getEnrolledCourses().contains(course)) {
-            student.enroll(course);
-            course.incrementEnrolledCount();
+    // Confirm enrollment (teacher action)
+    public boolean confirmEnrollment(Student student, Course course) {
+        List<Student> pending = pendingEnrollments.getOrDefault(course.getCourseId(), new ArrayList<>());
+        if (pending.contains(student)) {
+            pending.remove(student);
+            return enroll(student, course);
+        }
+        return false;
+    }
+
+    public List<Student> getPendingStudents(Course course) {
+        return pendingEnrollments.getOrDefault(course.getCourseId(), new ArrayList<>());
+    }
+
+    public boolean enroll(Student student, Course course) {
+        enrollmentMap.putIfAbsent(student, new ArrayList<>());
+        List<Course> enrolledCourses = enrollmentMap.get(student);
+        if (!enrolledCourses.contains(course)) {
+            enrolledCourses.add(course);
+            // Increment count
+            String courseId = course.getCourseId();
+            enrollmentCounts.put(courseId, enrollmentCounts.getOrDefault(courseId, 0) + 1);
+            return true;
+        }
+        return false; // already enrolled
+    }
+
+    public boolean unenroll(Student student, Course course) {
+        List<Course> enrolledCourses = enrollmentMap.get(student);
+        if (enrolledCourses != null && enrolledCourses.remove(course)) {
+            // Decrement count
+            String courseId = course.getCourseId();
+            int count = enrollmentCounts.getOrDefault(courseId, 0);
+            if (count > 0) {
+                enrollmentCounts.put(courseId, count - 1);
+            }
             return true;
         }
         return false;
     }
 
+    public List<Course> getEnrolledCourses(Student student) {
+        return enrollmentMap.getOrDefault(student, new ArrayList<>());
+    }
+
+    public boolean isEnrolled(Student student, Course course) {
+        List<Course> enrolledCourses = enrollmentMap.get(student);
+        return enrolledCourses != null && enrolledCourses.contains(course);
+    }
+
+    public int getEnrolledCount(Course course) {
+        return enrollmentCounts.getOrDefault(course.getCourseId(), 0);
+    }
+
+    public boolean canEnrollInCourse(Course course) {
+        int capacity = 30; // or make this configurable
+        return getEnrolledCount(course) < capacity;
+    }
+}
+
+interface EnrollmentService {
+    boolean requestEnrollment(Student student, String courseCode); // student requests
+    boolean confirmEnrollment(Student student, String courseCode); // teacher confirms
+    boolean unenrollStudentFromCourse(Student student, String courseCode);
+    List<Course> getEnrolledCourses(Student student);
+    EnrollmentManager getEnrollmentManager();
+    List<Student> getPendingStudents(String courseCode);
+    // Deprecated: Only for teacher confirmation, not for student use
+    @Deprecated
+    boolean enrollStudentInCourse(Student student, String courseId);
+}
+
+class StandardEnrollmentService implements EnrollmentService {
+    private CourseRepository courseRepository;
+    private EnrollmentManager enrollmentManager;
+
+    public StandardEnrollmentService(CourseRepository courseRepository, EnrollmentManager enrollmentManager) {
+        this.courseRepository = courseRepository;
+        this.enrollmentManager = enrollmentManager;
+    }
+
+    @Override
+    public EnrollmentManager getEnrollmentManager() {
+        return enrollmentManager;
+    }
+
+    @Override
+    public boolean requestEnrollment(Student student, String courseId) {
+        Course course = courseRepository.findCourseById(courseId);
+        if (course != null && !enrollmentManager.isEnrolled(student, course)) {
+            return enrollmentManager.requestEnrollment(student, course);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean confirmEnrollment(Student student, String courseId) {
+        Course course = courseRepository.findCourseById(courseId);
+        if (course != null) {
+            return enrollmentManager.confirmEnrollment(student, course);
+        }
+        return false;
+    }
+
+    @Override
+    public List<Student> getPendingStudents(String courseId) {
+        Course course = courseRepository.findCourseById(courseId);
+        if (course != null) {
+            return enrollmentManager.getPendingStudents(course);
+        }
+        return new ArrayList<>();
+    }
+
+    @Override
+    @Deprecated
+    public boolean enrollStudentInCourse(Student student, String courseId) {
+        // Only use this for teacher confirmation, not for student requests!
+        return confirmEnrollment(student, courseId);
+    }
+
     @Override
     public boolean unenrollStudentFromCourse(Student student, String courseId) {
         Course course = courseRepository.findCourseById(courseId);
-        if (course != null && student.getEnrolledCourses().contains(course)) {
-            student.unenroll(course);
-            course.decrementEnrolledCount();
-            return true;
+        if (course != null && enrollmentManager.isEnrolled(student, course)) {
+            return enrollmentManager.unenroll(student, course);
         }
         return false;
     }
 
     @Override
     public List<Course> getEnrolledCourses(Student student) {
-        return student.getEnrolledCourses();
+        return enrollmentManager.getEnrolledCourses(student);
     }
 }
+
 
 //GUI with Tables
 class EnrollmentGUI extends JFrame implements ActionListener {
@@ -92,6 +207,7 @@ class EnrollmentGUI extends JFrame implements ActionListener {
     private DefaultTableModel enrolledCoursesModel;
     private JButton enrollButton;
     private JButton unenrollButton;
+    private JLabel studentInfoLabel;
 
     public EnrollmentGUI(Student student, CourseRepository courseRepository, EnrollmentService enrollmentService) {
         this.currentStudent = student;
@@ -121,51 +237,8 @@ class EnrollmentGUI extends JFrame implements ActionListener {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
 
-        // Available Courses Table
-        availableCoursesModel = new DefaultTableModel(new Object[]{"ID", "Name", "Schedule"}, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false; // Make all cells non-editable
-            }
-        };
-        availableCoursesTable = new JTable(availableCoursesModel);
-        availableCoursesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        availableCoursesTable.getTableHeader().setReorderingAllowed(false); // Prevent column reordering
-        JScrollPane availableScrollPane = new JScrollPane(availableCoursesTable);
-        availableScrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Available Courses", TitledBorder.LEFT, TitledBorder.TOP, new Font("Arial", Font.PLAIN, 14)));
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        centerPanel.add(availableScrollPane, gbc);
-
-        // Buttons Panel (Vertical Arrangement)
-        JPanel buttonPanel = new JPanel(new GridBagLayout());
-        buttonPanel.setOpaque(false); // Make buttonPanel non-opaque
-        GridBagConstraints buttonGbc = new GridBagConstraints();
-        buttonGbc.fill = GridBagConstraints.HORIZONTAL;
-        buttonGbc.insets = new Insets(10, 5, 10, 5);
-        buttonGbc.weightx = 1.0;
-        buttonGbc.gridx = 0;
-        buttonGbc.gridy = 0;
-        buttonPanel.add(enrollButton = new JButton("Enroll"), buttonGbc);
-        buttonGbc.gridy = 1;
-        buttonPanel.add(unenrollButton = new JButton("Unenroll"), buttonGbc);
-
-        // Empty panel to take up vertical space for button alignment
-        buttonGbc.weighty = 1.0;
-        buttonGbc.gridy = 2;
-        
-        // Gets rid of random white line
-        JPanel spacerPanel = new JPanel();
-        spacerPanel.setOpaque(false); // Set the spacer panel to be non-opaque
-        buttonPanel.add(spacerPanel, buttonGbc);
-
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.weightx = 0.2; // Adjust width for buttons
-        centerPanel.add(buttonPanel, gbc);
-
-        // Enrolled Courses Table
-        enrolledCoursesModel = new DefaultTableModel(new Object[]{"ID", "Name", "Schedule"}, 0) {
+        // Enrolled Courses Table (LEFT)
+        enrolledCoursesModel = new DefaultTableModel(new Object[]{"ID", "Name"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false; // Make all cells non-editable
@@ -173,13 +246,71 @@ class EnrollmentGUI extends JFrame implements ActionListener {
         };
         enrolledCoursesTable = new JTable(enrolledCoursesModel);
         enrolledCoursesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        enrolledCoursesTable.getTableHeader().setReorderingAllowed(false); // Prevent column reordering
+        enrolledCoursesTable.getTableHeader().setReorderingAllowed(false);
+        enrolledCoursesTable.getColumnModel().getColumn(0).setPreferredWidth(60);
+        enrolledCoursesTable.getColumnModel().getColumn(0).setMinWidth(50);
+        enrolledCoursesTable.getColumnModel().getColumn(0).setMaxWidth(80);
         JScrollPane enrolledScrollPane = new JScrollPane(enrolledCoursesTable);
-        enrolledScrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Enrolled Courses", TitledBorder.LEFT, TitledBorder.TOP, new Font("Arial", Font.PLAIN, 14)));
-        gbc.gridx = 2;
+        enrolledScrollPane.setBorder(BorderFactory.createTitledBorder(
+            BorderFactory.createEtchedBorder(), "Enrolled Courses", TitledBorder.LEFT, TitledBorder.TOP, new Font("Arial", Font.PLAIN, 14)));
+        gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         centerPanel.add(enrolledScrollPane, gbc);
+
+        JPanel buttonPanel = new JPanel(new GridBagLayout());
+        buttonPanel.setOpaque(false);
+        GridBagConstraints buttonGbc = new GridBagConstraints();
+        buttonGbc.fill = GridBagConstraints.HORIZONTAL;
+        buttonGbc.insets = new Insets(5, 5, 5, 5);
+        buttonGbc.weightx = 1.0;
+        //Student info label above enroll button
+        studentInfoLabel = new JLabel("Student: " + currentStudent.getFirstName() + " " + currentStudent.getLastName() + " (ID: " + currentStudent.getAccountID() + ")");
+        studentInfoLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        studentInfoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        studentInfoLabel.setForeground(Color.white);
+        buttonGbc.gridx = 0;
+        buttonGbc.gridy = 0;
+        buttonGbc.gridwidth = 2;
+        buttonPanel.add(studentInfoLabel, buttonGbc);
+
+        buttonGbc.gridwidth = 1;
+        buttonGbc.gridy = 1;
+        buttonPanel.add(enrollButton = new JButton("Enroll"), buttonGbc);
+        buttonGbc.gridy = 2;
+        buttonPanel.add(unenrollButton = new JButton("Unenroll"), buttonGbc);
+
+        buttonGbc.weighty = 1.0;
+        buttonGbc.gridy = 3;
+        JPanel spacerPanel = new JPanel();
+        spacerPanel.setOpaque(false);
+        buttonPanel.add(spacerPanel, buttonGbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.weightx = 0.2;
+        centerPanel.add(buttonPanel, gbc);
+
+        // Available Courses Table (RIGHT)
+        availableCoursesModel = new DefaultTableModel(new Object[]{"ID", "Name"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Make all cells non-editable
+            }
+        };
+        availableCoursesTable = new JTable(availableCoursesModel);
+        availableCoursesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        availableCoursesTable.getTableHeader().setReorderingAllowed(false);
+        availableCoursesTable.getColumnModel().getColumn(0).setPreferredWidth(60);
+        availableCoursesTable.getColumnModel().getColumn(0).setMinWidth(50);
+        availableCoursesTable.getColumnModel().getColumn(0).setMaxWidth(80);
+        JScrollPane availableScrollPane = new JScrollPane(availableCoursesTable);
+        availableScrollPane.setBorder(BorderFactory.createTitledBorder(
+            BorderFactory.createEtchedBorder(), "Available Courses", TitledBorder.LEFT, TitledBorder.TOP, new Font("Arial", Font.PLAIN, 14)));
+        gbc.gridx = 2;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        centerPanel.add(availableScrollPane, gbc);
 
         // Button Action Listeners
         enrollButton.addActionListener(this);
@@ -193,6 +324,9 @@ class EnrollmentGUI extends JFrame implements ActionListener {
         setPreferredSize(new Dimension(900, 600)); // Set a preferred size
         pack(); // Size the frame to fit its components
         setLocationRelativeTo(null); // Center the window on the screen
+
+        setResizable(false); // <-- Add this line to disable maximize button
+
         setVisible(true);
     }
 
@@ -201,11 +335,11 @@ class EnrollmentGUI extends JFrame implements ActionListener {
         List<Course> allCourses = courseRepository.getAllCourses();
         List<Course> enrolled = enrollmentService.getEnrolledCourses(currentStudent);
         for (Course course : allCourses) {
-            if (!enrolled.contains(course) && course.canEnroll()) {
+            if (!enrolled.contains(course) && 
+                enrollmentService.getEnrollmentManager().canEnrollInCourse(course)) { // changed here
                 availableCoursesModel.addRow(new Object[]{
                         course.getCourseId(),
-                        course.getCourseName(),
-                        course.getSchedule()
+                        course.getCourseName(), 
                 });
             }
         }
@@ -217,7 +351,6 @@ class EnrollmentGUI extends JFrame implements ActionListener {
             enrolledCoursesModel.addRow(new Object[]{
                     course.getCourseId(),
                     course.getCourseName(),
-                    course.getSchedule()
             });
         }
     }
@@ -230,12 +363,11 @@ class EnrollmentGUI extends JFrame implements ActionListener {
                 String courseId = (String) availableCoursesModel.getValueAt(selectedRow, 0);
                 Course selectedCourse = courseRepository.findCourseById(courseId);
                 if (selectedCourse != null) {
-                    if (enrollmentService.enrollStudentInCourse(currentStudent, courseId)) {
-                        loadAvailableCourses();
-                        loadEnrolledCourses();
-                        JOptionPane.showMessageDialog(this, "Enrolled in " + selectedCourse.getCourseName());
+                    // Request enrollment instead of enrolling directly
+                    if (enrollmentService.requestEnrollment(currentStudent, courseId)) {
+                        JOptionPane.showMessageDialog(this, "Enrollment request sent for " + selectedCourse.getCourseName() + ". Waiting for teacher confirmation.");
                     } else {
-                        JOptionPane.showMessageDialog(this, "Failed to enroll in " + selectedCourse.getCourseName() + ". Course may be full or already enrolled.");
+                        JOptionPane.showMessageDialog(this, "Failed to send enrollment request for " + selectedCourse.getCourseName() + ". You may have already requested or are enrolled.");
                     }
                 }
             } else {
@@ -265,23 +397,33 @@ class EnrollmentGUI extends JFrame implements ActionListener {
 
 // Main Class
 public class CourseEnrollment {
-    public static void CourseEnroll() {
-        // Assume student login is already done and we have the current student object for testing
-        Student loggedInStudent = new Student(01, "Sample");
 
-        // Create some initial courses
-        List<Course> initialCourses = new ArrayList<>();
-        initialCourses.add(new Course("C1", "Placeholder", 30, "Mon/Wed 9:00 - 10:30"));
-        initialCourses.add(new Course("C2", "Placeholder", 25, "Tue/Thu 10:30 - 12:00"));
-        initialCourses.add(new Course("C3", "Placeholder", 35, "Mon/Wed 14:00 - 15:30"));
-        initialCourses.add(new Course("C4", "Placeholder", 28, "Tue/Thu 15:30 - 17:00"));
-        initialCourses.add(new Course("C5", "Placeholder", 30, "Tue/Thu 13:00 - 14:30"));
+    // Now expects a CourseRepository and Student to be passed in
+    public static void launchEnrollmentGUI(Student enrolledStudent, CourseRepository courseRepository) {
+        EnrollmentManager enrollmentManager = new EnrollmentManager();
+        EnrollmentService enrollmentService = new StandardEnrollmentService(courseRepository, enrollmentManager);
 
+        SwingUtilities.invokeLater(() -> new EnrollmentGUI(enrolledStudent, courseRepository, enrollmentService));
+    }
+
+    // Add this main method to allow running standalone
+    public static void main(String[] args) {
+        // Sample student
+        // Fix: The Student constructor should match your Student class definition.
         
-        CourseRepository courseRepository = new InMemoryCourseRepository(initialCourses);
-        EnrollmentService enrollmentService = new StandardEnrollmentService(courseRepository);
+        Student sampleStudent = new Student(" ", " ", " ", " ", " ", 1);
 
-          
-        SwingUtilities.invokeLater(() -> new EnrollmentGUI(loggedInStudent, courseRepository, enrollmentService));
+        // Sample courses
+        List<Course> courses = new ArrayList<>();
+        courses.add(new Course("SCS1", "Programming 1"));
+        courses.add(new Course("SCS2", "Web Development"));
+        courses.add(new Course("SCS3", "Digital Visual Arts"));
+        courses.add(new Course("SCS4", "Cyber Security"));
+        courses.add(new Course("SCS5", "Data Structures"));
+
+        CourseRepository courseRepository = new InMemoryCourseRepository(courses);
+
+        launchEnrollmentGUI(sampleStudent, courseRepository);
     }
 }
+
