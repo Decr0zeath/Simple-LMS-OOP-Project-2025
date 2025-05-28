@@ -11,6 +11,8 @@ import StudentTeacher.Student;
 import StudentTeacher.Teacher;
 import Course.Course;
 import AssignmentFiles.AssignmentInfo;
+//import Authentication.AuthenticationLogic;
+
 
 
 public class FileHandle {
@@ -185,25 +187,51 @@ public class FileHandle {
         }
     }
 
-    public static String getPasswordHash(String userID) throws IOException {
-        // Check both student and teacher files
-        File[] files = {new File("newStudent.txt"), new File("newTeacher.txt")};
+    
+    public void saveStudentWithHashedPassword(Student student) {
+        try {
+            String hashedPassword = hashPassword.hashPassword(student.getPassword());
+            
+            String line = student.getFirstName() + "," +
+                        student.getLastName() + "," +
+                        student.getAccountID() + "," +
+                        hashedPassword + "," +
+                        student.getDegree() + "," +
+                        student.getYear() + "," +
+                        student.getRole();
 
-        for (File file : files) {
-            if (!file.exists()) continue;
+            FileWriter writer = new FileWriter("newStudent.txt", true);
+            writer.write(line + "\n");
+            writer.close();
 
-            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    String[] tokens = line.split(",");
-                    if (tokens.length >= 4 && tokens[2].equals(userID)) {
-                        return tokens[3]; // This is the hashed password
-                    }
-                }
-            }
+            System.out.println("Student saved with hashed password.");
+        } catch (IOException e) {
+            System.out.println("An error occurred while saving the student.");
+            e.printStackTrace();
         }
-        
-        return null;
     }
+
+    public void saveTeacherWithHashedPassword(Teacher teacher) {
+        try {
+            String hashedPassword = hashPassword.hashPassword(teacher.getPassword());
+
+            String line = teacher.getFirstName() + "," +
+                        teacher.getLastName() + "," +
+                        teacher.getAccountID() + "," +
+                        hashedPassword + "," +
+                        teacher.getRole();
+
+            FileWriter writer = new FileWriter("newTeacher.txt", true);
+            writer.write(line + "\n");
+            writer.close();
+
+            System.out.println("Teacher saved with hashed password.");
+        } catch (IOException e) {
+            System.out.println("An error occurred while saving the teacher.");
+            e.printStackTrace();
+        }
+}
+
+
 }
 
