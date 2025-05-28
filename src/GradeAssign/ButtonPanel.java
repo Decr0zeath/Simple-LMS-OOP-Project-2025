@@ -20,7 +20,7 @@ public class ButtonPanel {
         this.gradeManager = gradeManager;
 
         buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
-        buttonPanel.setBackground(new Color(0x458846));
+        buttonPanel.setBackground(new Color(0,128,0));
 
         studentDropdown = new JComboBox<>(gradeManager.getAllStudents());
         studentDropdown.setPreferredSize(new Dimension(200, 50));

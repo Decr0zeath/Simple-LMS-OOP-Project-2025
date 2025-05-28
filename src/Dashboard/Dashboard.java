@@ -1,6 +1,7 @@
 package Dashboard;
 
 import Course.CourseManagementGUI;
+import GradeAssign.MainFrame;
 import java.awt.*;
 import java.awt.event.*;
 import java.net.URL;
@@ -25,9 +26,8 @@ public class Dashboard {
         toDoPanel.setBackground(Color.GRAY);
         toDoPanel.add(new JButton("To-Do Panel"));
 
-        JPanel gradePanel = new JPanel();
-        gradePanel.setBackground(Color.WHITE);
-        gradePanel.add(new JButton("Grade Panel"));
+        // ✅ Replacing the temporary grade panel with GradeAssign.MainFrame
+        MainFrame gradePanel = new MainFrame(); // Assuming MainFrame extends JPanel
 
         cardPanel.add(coursePanel, "Courses");
         cardPanel.add(toDoPanel, "To-Do");
@@ -81,24 +81,33 @@ public class Dashboard {
         // Create the profile menu (JPopupMenu)
         JPopupMenu profileMenu = new JPopupMenu();
         profileMenu.setLayout(new BoxLayout(profileMenu, BoxLayout.Y_AXIS));
-        profileMenu.setPreferredSize(new Dimension(234, 80));
+        profileMenu.setPreferredSize(new Dimension(234, 120)); // Adjusted height for 3 items
 
         JMenuItem viewProfile = new JMenuItem("View Profile");
+        JMenuItem courseEnroll = new JMenuItem("Course Enroll"); // New item
         JMenuItem logout = new JMenuItem("Logout");
 
         Dimension menuItemSize = new Dimension(buttonWidth, 40);
         viewProfile.setPreferredSize(menuItemSize);
+        courseEnroll.setPreferredSize(menuItemSize); // Set size for new item
         logout.setPreferredSize(menuItemSize);
 
+        // Add items to popup menu
         profileMenu.add(viewProfile);
+        profileMenu.add(courseEnroll); // New item added between
         profileMenu.add(logout);
 
-        // Boolean array to track if the menu is visible (moved here to fix the error)
         boolean[] isMenuVisible = { false };
 
-        // Action listeners for the menu items
+        // Action listeners
         viewProfile.addActionListener(e -> {
             openProfileFrame();
+            profileMenu.setVisible(false);
+            isMenuVisible[0] = false;
+        });
+
+        courseEnroll.addActionListener(e -> {
+            openCourseEnrollFrame(); // New method
             profileMenu.setVisible(false);
             isMenuVisible[0] = false;
         });
@@ -109,7 +118,7 @@ public class Dashboard {
             isMenuVisible[0] = false;
         });
 
-        // Profile button action listener to toggle menu visibility
+        // Toggle profile menu
         pButton.addActionListener(e -> {
             if (isMenuVisible[0]) {
                 profileMenu.setVisible(false);
@@ -155,6 +164,20 @@ public class Dashboard {
 
         profileFrame.setLocationRelativeTo(null);
         profileFrame.setVisible(true);
+    }
+
+    private static void openCourseEnrollFrame() {
+        JFrame enrollFrame = new JFrame("Course Enroll");
+        enrollFrame.setSize(300, 200);
+        enrollFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        enrollFrame.setLayout(new BorderLayout());
+
+        JLabel enrollLabel = new JLabel("<html><h3>Enroll in a New Course</h3><p>Functionality coming soon...</p></html>");
+        enrollLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        enrollFrame.add(enrollLabel, BorderLayout.CENTER);
+
+        enrollFrame.setLocationRelativeTo(null);
+        enrollFrame.setVisible(true);
     }
 
     private static void openLogoutFrame() {
@@ -255,7 +278,6 @@ public class Dashboard {
     }
 
     public void setVisible(boolean b) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'setVisible'");
     }
 }
