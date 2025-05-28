@@ -1,10 +1,9 @@
-package AuthenticationLogic;
-
+package Authentication;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.io.IOException;
 import java.util.Scanner;
-import DataSaving.FileHandle; 
+//import DataSaving.FileHandle; 
 import java.io.BufferedReader;
 import java.io.FileReader;
 
