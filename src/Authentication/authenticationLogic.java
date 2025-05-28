@@ -1,3 +1,5 @@
+package AuthenticationLogic;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.io.IOException;
@@ -23,13 +25,32 @@ public class AuthenticationLogic {
     }
 
     public static String getStoredPasswordHashFromDB(String userID) {
-        try {
-            FileHandle fileHandle = new FileHandle(); 
-            return fileHandle.getPasswordHash(userID); 
-        } catch (IOException e) {
-            System.err.println("Error reading user data: " + e.getMessage());
+        String fileName;
+
+        // Determine whether to search in student or teacher file
+        if (userID.length() == 10) {
+            fileName = "newStudent.txt";
+        } else if (userID.length() == 5) {
+            fileName = "newTeacher.txt";
+        } else {
             return null;
         }
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length >= 4 && parts[2].trim().equals(userID.trim())) {
+                    return parts[3].trim(); // Hashed password
+                }
+            }
+
+        } catch (IOException e) {
+            System.err.println("Error reading user data: " + e.getMessage());
+        }
+
+        return null; // No matching user found
     }
 
     public static String determineRole(String userID) {
