@@ -2,23 +2,33 @@ package AssignmentFiles;
 
 import java.awt.*;
 import javax.swing.*;
+import java.io.IOException;
+import DataSaving.FileHandle;
 
-//  Action interface for button 
-interface WindowAction extends Runnable{
-    void execute();
-}
+public class AssignmentManagementGUI {
+    private JFrame frame;
+    private JComboBox<String> courseCombo;
+    private JTextField assignmentTitleField;
+    private JTextArea descriptionArea;
+    private JComboBox<String> yearCombo, monthCombo, dayCombo;
+    private JTextField totalMarksField;
+    private JButton addButton, clearButton, cancelButton;
 
-//  CourseWindowView
-class CourseWindowView {
-    JFrame frame;
-    JComboBox<String> courseCombo;
-    JTextField assignmentTitleField;
-    JTextArea descriptionArea;
-    JComboBox<String> yearCombo, monthCombo, dayCombo;
-    JTextField totalMarksField;
-    JButton addButton, clearButton, cancelButton;
+    // These should be passed from your login/session logic
+    private final StudentTeacher.Teacher teacher;
+    private final Course.Course course;
 
-    public CourseWindowView() {
+    // Static fields for session management
+    private static StudentTeacher.Teacher loggedInTeacher;
+    private static Course.Course selectedCourse;
+
+    public AssignmentManagementGUI(StudentTeacher.Teacher teacher, Course.Course course) {
+        this.teacher = teacher;
+        this.course = course;
+        initialize();
+    }
+
+    private void initialize() {
         frame = new JFrame("University of San Jose-Recoletos");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1000, 800);
@@ -136,79 +146,102 @@ class CourseWindowView {
         mainPanel.add(buttonPanel);
 
         frame.setContentPane(mainPanel);
+
+        // Listeners
+        clearButton.addActionListener(e -> {
+            assignmentTitleField.setText("");
+            descriptionArea.setText("");
+            yearCombo.setSelectedIndex(0);
+            monthCombo.setSelectedIndex(0);
+            dayCombo.setSelectedIndex(0);
+            totalMarksField.setText("");
+        });
+
+        cancelButton.addActionListener(e -> frame.dispose());
+
+        addButton.addActionListener(e -> {
+            String title = assignmentTitleField.getText().trim();
+            String description = descriptionArea.getText().trim();
+            String year = (String) yearCombo.getSelectedItem();
+            String month = (String) monthCombo.getSelectedItem();
+            String day = (String) dayCombo.getSelectedItem();
+            String totalMarks = totalMarksField.getText().trim();
+
+            if (title.isEmpty() || description.isEmpty() || totalMarks.isEmpty()) {
+                JOptionPane.showMessageDialog(frame, "Please fill in all fields.", "Input Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            try {
+                int monthNum = Integer.parseInt(month.substring(0, 2));
+                int dayNum = Integer.parseInt(day);
+                java.time.LocalDate dueDate = java.time.LocalDate.of(Integer.parseInt(year), monthNum, dayNum);
+
+                // Save assignment with teacher's name and assignment details
+                AssignmentInfo assignment = new AssignmentInfo(title, description, dueDate);
+
+                FileHandle fileHandle = new FileHandle();
+                fileHandle.savePostedAssignment(teacher, course, assignment);
+
+                JOptionPane.showMessageDialog(frame, "Assignment posted and saved successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
+
+                frame.dispose();
+            } catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(frame, ex.getMessage(), "Input Error", JOptionPane.ERROR_MESSAGE);
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(frame, "Error saving assignment: " + ex.getMessage(), "File Error", JOptionPane.ERROR_MESSAGE);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(frame, "Unexpected error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                ex.printStackTrace();
+            }
+        });
     }
 
     public void show() {
         frame.setVisible(true);
     }
-}
 
-class CourseWindowController {
-    private final CourseWindowView view;
-    private final Runnable onAddAssignment;
-
-    public CourseWindowController(CourseWindowView view, Runnable onAddAssignment) {
-        this.view = view;
-        this.onAddAssignment = onAddAssignment;
-        attachListeners();
-    }
-
-    private void attachListeners() {
-        view.clearButton.addActionListener(e -> {
-            view.assignmentTitleField.setText("");
-            view.descriptionArea.setText("");
-            view.yearCombo.setSelectedIndex(0);
-            view.monthCombo.setSelectedIndex(0);
-            view.dayCombo.setSelectedIndex(0);
-            view.totalMarksField.setText("");
-        });
-
-        view.cancelButton.addActionListener(e -> view.frame.dispose());
-
-        view.addButton.addActionListener(e -> {
-        //  Collect Data
-        //String title = view.assignmentTitleField.getText().trim();
-       // String description = view.descriptionArea.getText().trim();
-       // String year = (String) view.yearCombo.getSelectedItem();
-       // String month = (String) view.monthCombo.getSelectedItem();
-        //String day = (String) view.dayCombo.getSelectedItem();
-        String totalMarks = view.totalMarksField.getText().trim();
-
-        if (totalMarks.isEmpty()){
-            JOptionPane.showMessageDialog(view.frame, "Input the total marks", "Input Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        //int monthNum = Integer.parseInt(month.substring(0, 2));
-        //int dayNum = Integer.parseInt(day);
-
-        //java.time.LocalDate dueDate = java.time.LocalDate.of(Integer.parseInt(year), monthNum, dayNum);
-
+    // Main method for launching the GUI
+    public static void main(String[] args) {
         try {
-            // Validate and create Assignment object
-           // Assignment assignment = new Assignment(title, description, dueDate);
-
-            view.frame.dispose();
-            onAddAssignment.run(); 
-        } catch (IllegalArgumentException ex) {
-            JOptionPane.showMessageDialog(view.frame, ex.getMessage(), "Input Error", JOptionPane.ERROR_MESSAGE);
+            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-    });
+
+        // Demo
+        /*setLoggedInTeacher(new StudentTeacher.Teacher("Juan", "Dela Cruz", "T12345", "password123"));
+        setSelectedCourse(new Course.Course("SCS101", "Programming 1"));*/
+
+       
+        StudentTeacher.Teacher teacher = getLoggedInTeacher();
+        Course.Course course = getSelectedCourse();
+
+        AssignmentManagementGUI gui = new AssignmentManagementGUI(teacher, course);
+        gui.show();
+    }
+
+    
+    public static void setLoggedInTeacher(StudentTeacher.Teacher teacher) {
+        loggedInTeacher = teacher;
+    }
+
+    public static void setSelectedCourse(Course.Course course) {
+        selectedCourse = course;
+    }
+
+    // Methods to get the teacher and course from session/static fields
+    private static StudentTeacher.Teacher getLoggedInTeacher() {
+        if (loggedInTeacher == null) {
+            throw new IllegalStateException("No teacher is currently logged in. Please login first.");
+        }
+        return loggedInTeacher;
+    }
+
+    private static Course.Course getSelectedCourse() {
+        if (selectedCourse == null) {
+            throw new IllegalStateException("No course is currently selected. Please select a course first.");
+        }
+        return selectedCourse;
     }
 }
-
-//  Main class
-// public class AssignmentManagementGUI {
-//     public static void main(String[] args){
-//         try {
-//             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-//         } catch (Exception e) {
-//             e.printStackTrace();
-//         }
-
-//         CourseWindowView view = new CourseWindowView();
-//         new CourseWindowController(view, () -> new AssignmentSubmissionForm());
-//         // CHANGED: This will now open AssignmentSubmissionForm
-//         view.show();
-//     }
-// }
